@@ -20,36 +20,33 @@ export default function Header() {
         console.log(openMenu)
     }
 
-    var className = "logo-normal";
     var scrollTrigger = 50;
-
     window.onscroll = function () {
         // We add pageYOffset for compatibility with IE.
-        if (window.scrollY >= scrollTrigger || window.pageYOffset >= scrollTrigger) {
+        if (window.scrollY >= scrollTrigger) {
             document.getElementById("header").classList.add('header-normal');
             document.getElementById("header").classList.remove('header-advance');
             document.querySelectorAll('.nav-link').forEach((x) => {
-                x.classList.add('text-black');
-                x.classList.remove('text-white');
+                x?.classList.add('text-black');
+                x?.classList.remove('text-white');
             })
         } else {
             document.getElementById("header").classList.remove('header-normal');
             document.getElementById("header").classList.add('header-advance');
             document.querySelectorAll('.nav-link').forEach((x) => {
-                x.classList.add('text-white');
-                x.classList.remove('text-black');
+                x?.classList.add('text-white');
+                x?.classList.remove('text-black');
             })
         }
     };
 
 
-
     return (
-        <div className="w-full fixed">
+        <div className="w-full z-50 fixed">
             {/*- more free and premium Tailwind CSS components at https://tailwinduikit.com/ -*/}
             <div className="bg-none transition-all shadow-lg py-5 px-7 header-advance" id="header">
-                <nav className="flex justify-between">
-                    <div className="text-center space-x-3 lg:pr-16 pr-6">
+                <nav className="flex sm:px-10 justify-between">
+                    <div className="cursor-pointer text-center space-x-3 lg:pr-16 pr-6">
                         <h2 className="font-normal logo text-2xl leading-6" id='logo'>
                             Graph <span>Community</span>
                         </h2>
@@ -74,15 +71,15 @@ export default function Header() {
                         >
                             Community
                         </li>
-                        <li
+                        {/* <li
                             onClick={() => changeTab('Contact')}
                             className={`text-white nav-link focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${activeTab == 'Contact' ? 'activeNav' : 'text-black'}   cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded`}
                         >
                             Contact us
-                        </li>
+                        </li> */}
                     </ul>
                     <div className=" flex space-x-5 justify-center items-center pl-2">
-                        <div className="relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ">
+                        <div className="flex relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ">
                             <button className=" mx-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800  text-white bg-green-600 cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded" onClick={() => goToNavigate('/signin')} >Sign in</button>
                             <button className=" mx-2   text-green-600 bg-white border-solid cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded" onClick={() => goToNavigate('/signup')} >Sign up</button>
                             {/* <svg
