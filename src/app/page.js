@@ -1,9 +1,14 @@
+"use client";
 import Image from "next/image";
-
+import Header from "./components/header";
+import img from '../../public/home-back.jpg'
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      
+    <main className="min-h-screen">
+        <Header />
+        <div className={"w-full"} id="hero_section" >
+            <Image src={img} alt="back" />
+        </div>
     </main>
   );
 }

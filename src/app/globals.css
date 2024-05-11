@@ -1,4 +1,57 @@
+@import url('bootstrap-icons/font/bootstrap-icons.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#hero_section{
+    height: calc(100vh);
+    background: url('../../public/home-back.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+.header-normal{
+    background-color: white;
+    .logo{
+        color: #16a34a;
+        font-size: 25px;
+        font-family: "Abril Fatface", serif;
+        span{
+            font-size: 18px;
+            color: black;
+            font-family: "Courgette", cursive;
+        }
+    
+    }
+
+    li{
+        color: black;
+    }
+}
+
+.activeNav{
+    background-color: #16a34a;
+    color: white !important; 
+}
+
+.header-advance{
+    background-color: none;
+    box-shadow: none;
+    .logo{
+        color: #00ff5e;
+        font-size: 25px;
+        font-family: "Abril Fatface", serif;
+        span{
+            font-size: 18px;
+            color: white;
+            font-family: "Courgette", cursive;
+        }
+    
+    }
+}
+
+
 
