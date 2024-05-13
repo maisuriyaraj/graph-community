@@ -9,7 +9,8 @@
 
 
 
-p{
+p,
+a {
     font-family: "Montserrat", sans-serif;
 
 }
@@ -92,7 +93,7 @@ p{
 }
 
 #about_section {
-    height: 120vh ;
+    height: 120vh;
 
     .hero-title-about {
         color: #16a34a;
@@ -114,12 +115,44 @@ p{
         right: 48px;
     }
 
-    .text-title{
+    .text-title {
         color: #16a34a;
         font-family: "Abril Fatface", serif;
         letter-spacing: 1px;
     }
 }
+
+#community{
+    height: 80vh;
+
+    .hero-title-about {
+        color: #16a34a;
+        font-size: 4rem;
+        font-family: "Abril Fatface", serif;
+    }
+
+    .section-img {
+        clip-path: circle(35% at 50% 50%);
+    }
+
+    .green-svg1 {
+        top: 201px;
+        left: 24px;
+    }
+
+    .green-svg2 {
+        bottom: 250px;
+        right: 50px;
+    }
+
+    .text-title {
+        color: #16a34a;
+        font-family: "Abril Fatface", serif;
+        letter-spacing: 1px;
+    }
+}
+
+
 
 @media screen and (max-width:991px) {
     .hero-title-div {
@@ -151,7 +184,8 @@ p{
 
     #about_section {
         padding: 10px !important;
-            margin-bottom: 55rem !important;
+        margin-bottom: 15rem !important;
+
         .section-img {
             border-radius: 50px;
         }
@@ -161,14 +195,42 @@ p{
             left: 10px;
             width: 100px;
         }
-        .green-svg2{
-        bottom: -20px;
-        right: 5px;
-        width: 85px;
+
+        .green-svg2 {
+            bottom: -20px;
+            right: 5px;
+            width: 85px;
         }
     }
+
+    #community{
+        .green-svg1 {
+            top: 10px;
+            left: 10px;
+        }
+    
+        .green-svg2 {
+            bottom: 95px;
+            right: 20px;
+        }
+    }
+
+    .footer-1{
+        margin-top: 65rem;
+    }
+
 }
 
+@media screen and (max-width:767px) {
+    #about_section {
+        padding: 10px !important;
+        margin-bottom: 55rem !important;
+    }
+
+    .footer-1{
+        margin-top: 65rem;
+    }
+}
 
 /* Up Down Animation  */
 

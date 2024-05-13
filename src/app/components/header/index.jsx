@@ -1,11 +1,36 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
     const [activeTab, setActive] = useState('Home');
     const [openMenu, setOpenMenu] = useState(false);
     const route = useRouter();
+
+
+    useEffect(() => {
+
+        addEventListener('scroll', function () {
+            // We add pageYOffset for compatibility with IE.
+            var scrollTrigger = 50;
+            if (window.scrollY >= scrollTrigger) {
+                document.getElementById("header")?.classList.add('header-normal');
+                document.getElementById("header")?.classList.remove('header-advance');
+                document.querySelectorAll('.nav-link').forEach((x) => {
+                    x?.classList.add('text-black');
+                    x?.classList.remove('text-white');
+                })
+            } else {
+                document.getElementById("header")?.classList.remove('header-normal');
+                document.getElementById("header")?.classList.add('header-advance');
+                document.querySelectorAll('.nav-link').forEach((x) => {
+                    x?.classList.add('text-white');
+                    x?.classList.remove('text-black');
+                })
+            }
+        })
+    }, []);
+
     function changeTab(tab) {
         setActive(tab);
         setOpenMenu(false);
@@ -20,25 +45,6 @@ export default function Header() {
         console.log(openMenu)
     }
 
-    var scrollTrigger = 50;
-    window.onscroll = function () {
-        // We add pageYOffset for compatibility with IE.
-        if (window.scrollY >= scrollTrigger) {
-            document.getElementById("header").classList.add('header-normal');
-            document.getElementById("header").classList.remove('header-advance');
-            document.querySelectorAll('.nav-link').forEach((x) => {
-                x?.classList.add('text-black');
-                x?.classList.remove('text-white');
-            })
-        } else {
-            document.getElementById("header").classList.remove('header-normal');
-            document.getElementById("header").classList.add('header-advance');
-            document.querySelectorAll('.nav-link').forEach((x) => {
-                x?.classList.add('text-white');
-                x?.classList.remove('text-black');
-            })
-        }
-    };
 
 
     return (

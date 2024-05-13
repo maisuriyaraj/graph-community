@@ -1,11 +1,37 @@
 "use client";
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import './signIn.css';
 import { object, ref, string } from 'yup';
 import { Field, Form,ErrorMessage, Formik } from 'formik';
+import { getAuth } from "firebase/auth";
+import { signInWithPopup,GoogleAuthProvider } from "firebase/auth";
+import app from "../../../config";
 
 export default function SignIn() {
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = auth.onAuthStateChanged((data) => {
+        if(data){
+            console.log(data);
+        }else{
+            console.log("nothing");
+        }
+    });
+
+    return unsubscribe;
+},[]);
+
+const signInWithGoogle = async() => {
+    const auth =getAuth(app);
+    const provider = new GoogleAuthProvider();
+    try {
+        const data = await signInWithPopup(auth,provider);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
   const initialValues = {
     email: "",
@@ -116,8 +142,8 @@ export default function SignIn() {
                         <span className="text-sm font-medium text-gray-800 group-hover:text-white">Github</span>
                       </a>
                       <a
-                        href="#"
-                        className="flex items-center justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group  focus:outline-none"
+                      onClick={signInWithGoogle}
+                        className="flex cursor-pointer items-center justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group  focus:outline-none"
                       >
                         <span>
                           {/* <i className="bi bi-google w-5 h-5  fill-current"></i> */}
