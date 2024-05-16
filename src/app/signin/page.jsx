@@ -11,16 +11,16 @@ import app from "../../../config";
 export default function SignIn() {
 
   useEffect(() => {
-    const auth = getAuth(app);
-    const unsubscribe = auth.onAuthStateChanged((data) => {
-        if(data){
-            console.log(data);
-        }else{
-            console.log("nothing");
-        }
-    });
+    // const auth = getAuth(app);
+    // const unsubscribe = auth.onAuthStateChanged((data) => {
+    //     if(data){
+    //         console.log(data);
+    //     }else{
+    //         console.log("nothing");
+    //     }
+    // });
 
-    return unsubscribe;
+    // return unsubscribe;
 },[]);
 
 const signInWithGoogle = async() => {
@@ -28,6 +28,7 @@ const signInWithGoogle = async() => {
     const provider = new GoogleAuthProvider();
     try {
         const data = await signInWithPopup(auth,provider);
+        console.log(data)
     } catch (error) {
         console.log(error);
     }
