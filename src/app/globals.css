@@ -133,6 +133,8 @@ a {
 
     .section-img {
         clip-path: circle(35% at 50% 50%);
+        height: 500px;
+        object-fit: cover;
     }
 
     .green-svg1 {
@@ -152,6 +154,15 @@ a {
     }
 }
 
+.footer-1{
+    margin-top: 20rem;
+}
+
+@media screen and (max-width:1200px) {
+    .footer-1{
+        margin-top: 30rem;
+    }
+}
 
 
 @media screen and (max-width:991px) {
@@ -216,7 +227,7 @@ a {
     }
 
     .footer-1{
-        margin-top: 65rem;
+        margin-top: 45rem;
     }
 
 }
@@ -228,7 +239,7 @@ a {
     }
 
     .footer-1{
-        margin-top: 65rem;
+        margin-top: 80rem;
     }
 }
 

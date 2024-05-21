@@ -4,30 +4,58 @@ import { useEffect, useState } from "react";
 import { object, ref, string } from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { getAuth } from "firebase/auth";
-import { signInWithPopup,GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import app from "../../../config";
-
+import { postRequest } from "@/lib/api.service";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from "next/navigation";
+import Loader from "../components/loader";
 
 export default function SignUp() {
+
+    const route = useRouter();
+    const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
         const auth = getAuth(app);
         const unsubscribe = auth.onAuthStateChanged((data) => {
-            if(data){
+            if (data) {
                 console.log(data);
-            }else{
+            } else {
                 console.log("nothing");
             }
         });
 
         return unsubscribe;
-    },[]);
+    }, []);
 
-    const signInWithGoogle = async() => {
-        const auth =getAuth(app);
+    const showLoader = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 3000);
+    }
+
+    const signInWithGoogle = async () => {
+        const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
         try {
-            const data = await signInWithPopup(auth,provider);
+            const data = await signInWithPopup(auth, provider);
+            const response = await postRequest("http://localhost:3000/api/auth", {
+                email: data.user.email,
+                userName: data.user.displayName,
+                googleAccount: true
+            });
+            showLoader();
+
+            if (response.data.status) {
+                sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                route.push('/dashboard');
+            } else {
+                toast.error(response.data.message);
+            }
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -63,8 +91,30 @@ export default function SignUp() {
             }
         }
     }
+
+    const handleFormSubmit = (formData) => {
+        const payload = {
+            email: formData.email,
+            password: formData.password
+        }
+
+        postRequest("http://localhost:3000/api/auth", payload).then((response) => {
+            showLoader();
+            if (response.data.status) {
+                sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                route.push('/dashboard');
+            } else {
+                toast.error(response.data.message);
+            }
+            setLoading(false);
+        }).catch(error => {
+            console.log(error)
+        });
+    }
     return (
         <div className='w-full' id='signIn'>
+            <ToastContainer />
+            {isLoading && <Loader isLoading={isLoading} />}
             <div className="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
                 <div
                     className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md"
@@ -88,7 +138,7 @@ export default function SignUp() {
                     </div>
                     <div className="p-5 bg-white md:flex-1">
                         <h3 className="my-4 text-2xl font-semibold text-gray-700">Sign Up</h3>
-                        <Formik initialValues={initialValues} validationSchema={validationSchema}>
+                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleFormSubmit}>
                             <Form action="#" className="flex flex-col space-y-5">
                                 <div className="flex flex-col space-y-1">
                                     <label htmlFor="email" className="text-sm font-semibold text-gray-500">Email address</label>

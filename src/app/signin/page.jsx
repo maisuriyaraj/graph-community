@@ -1,15 +1,22 @@
 "use client";
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './signIn.css';
 import { object, ref, string } from 'yup';
-import { Field, Form,ErrorMessage, Formik } from 'formik';
+import { Field, Form, ErrorMessage, Formik } from 'formik';
 import { getAuth } from "firebase/auth";
-import { signInWithPopup,GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import app from "../../../config";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { postRequest } from '@/lib/api.service';
+import { useRouter } from 'next/navigation';
+import Loader from '../components/loader';
 
 export default function SignIn() {
-
+  const route = useRouter();
+  const [isLoading, setLoading] = useState(false);
   useEffect(() => {
     // const auth = getAuth(app);
     // const unsubscribe = auth.onAuthStateChanged((data) => {
@@ -21,18 +28,38 @@ export default function SignIn() {
     // });
 
     // return unsubscribe;
-},[]);
+  }, []);
 
-const signInWithGoogle = async() => {
-    const auth =getAuth(app);
+  const showLoader = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }
+
+  const signInWithGoogle = async () => {
+    const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     try {
-        const data = await signInWithPopup(auth,provider);
-        console.log(data)
+      const data = await signInWithPopup(auth, provider);
+      const response = await postRequest("http://localhost:3000/api/auth", {
+        email: data.user.email,
+        userName: data.user.displayName,
+        googleAccount: true
+      });
+      showLoader();
+
+      if (response.data.status) {
+        sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        route.push('/dashboard');
+      } else {
+        toast.error(response.data.message);
+      }
+      setLoading(false);
     } catch (error) {
-        console.log(error);
+      console.log(error)
     }
-}
+  }
 
   const initialValues = {
     email: "",
@@ -58,9 +85,33 @@ const signInWithGoogle = async() => {
       }
     }
   }
+
+  const handleFormSubmit = (formData) => {
+    const payload = {
+      email: formData.email,
+      password: formData.password
+    }
+
+    postRequest("http://localhost:3000/api/auth", payload).then((response) => {
+      showLoader();
+      if (response.data.status) {
+        sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        route.push('/dashboard');
+      } else {
+        toast.error(response.data.message);
+      }
+      setLoading(false);
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+
   return (
     <>
       <div className='w-full' id='signIn'>
+        <ToastContainer />
+        {isLoading && <Loader isLoading={isLoading} />}
         <div className="lg:flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
           <div
             className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md"
@@ -84,7 +135,7 @@ const signInWithGoogle = async() => {
             </div>
             <div className="p-5 bg-white md:flex-1">
               <h3 className="my-4 text-2xl font-semibold text-gray-700">SignIn</h3>
-              <Formik validationSchema={validationSchema} initialValues={initialValues}>
+              <Formik validationSchema={validationSchema} initialValues={initialValues} onSubmit={handleFormSubmit} >
                 <Form action="#" className="flex flex-col space-y-5">
                   <div className="flex flex-col space-y-1">
                     <label htmlFor="email" className="text-sm font-semibold text-gray-500">Email address</label>
@@ -111,9 +162,10 @@ const signInWithGoogle = async() => {
                     <i className="bi bi-eye-fill eye-icon" id='eye-icon' onClick={() => togglePassword()}></i>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Field
+                    <input
                       type="checkbox"
                       id="remember"
+
                       className="w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
                     />
                     <label htmlFor="remember" className="text-sm font-semibold text-gray-500">Remember me</label>
@@ -143,7 +195,7 @@ const signInWithGoogle = async() => {
                         <span className="text-sm font-medium text-gray-800 group-hover:text-white">Github</span>
                       </a>
                       <a
-                      onClick={signInWithGoogle}
+                        onClick={signInWithGoogle}
                         className="flex cursor-pointer items-center justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group  focus:outline-none"
                       >
                         <span>
