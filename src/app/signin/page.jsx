@@ -9,8 +9,8 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import app from "../../../config";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import { postRequest } from '@/lib/api.service';
+import Cookies from 'js-cookie';
+import { postRequest, putRequest } from '@/lib/api.service';
 import { useRouter } from 'next/navigation';
 import Loader from '../components/loader';
 
@@ -18,16 +18,7 @@ export default function SignIn() {
   const route = useRouter();
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
-    // const auth = getAuth(app);
-    // const unsubscribe = auth.onAuthStateChanged((data) => {
-    //     if(data){
-    //         console.log(data);
-    //     }else{
-    //         console.log("nothing");
-    //     }
-    // });
-
-    // return unsubscribe;
+    
   }, []);
 
   const showLoader = () => {
@@ -42,7 +33,7 @@ export default function SignIn() {
     const provider = new GoogleAuthProvider();
     try {
       const data = await signInWithPopup(auth, provider);
-      const response = await postRequest("http://localhost:3000/api/auth", {
+      const response = await putRequest("http://localhost:3000/api/auth", {
         email: data.user.email,
         userName: data.user.displayName,
         googleAccount: true
@@ -50,8 +41,11 @@ export default function SignIn() {
       showLoader();
 
       if (response.data.status) {
-        sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
-        route.push('/dashboard');
+        localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+        setTimeout(() => {
+          route.push('/dashboard');
+        }, 3000);
       } else {
         toast.error(response.data.message);
       }
@@ -60,6 +54,32 @@ export default function SignIn() {
       console.log(error)
     }
   }
+
+  const signInWithGitHub = async () => {
+    const auth = getAuth(app);
+    const provider = new GithubAuthProvider();
+    try {
+        const data = await signInWithPopup(auth, provider);
+        console.log(data)
+        // const response = await postRequest("http://localhost:3000/api/auth", {
+        //     email: data.user.email,
+        //     userName: data.user.displayName,
+        //     googleAccount: true
+        // });
+        // showLoader();
+
+        // if (response.data.status) {
+        //     localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        //     Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+        //     route.push('/dashboard');
+        // } else {
+        //     toast.error(response.data.message);
+        // }
+        // setLoading(false);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
   const initialValues = {
     email: "",
@@ -92,11 +112,21 @@ export default function SignIn() {
       password: formData.password
     }
 
-    postRequest("http://localhost:3000/api/auth", payload).then((response) => {
+    putRequest("http://localhost:3000/api/auth", payload).then((response) => {
       showLoader();
       if (response.data.status) {
-        sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+        Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+
         route.push('/dashboard');
+      }else if(response.data.code == 501){
+        let inputs  = document.querySelectorAll('.input-controls');
+        console.log(inputs)
+        if(inputs){
+          inputs.forEach((x)=>{
+            x.classList.add('err-Boxes');
+          });
+        }
       } else {
         toast.error(response.data.message);
       }
@@ -143,7 +173,7 @@ export default function SignIn() {
                       type="email"
                       id="email"
                       name="email"
-                      className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200"
+                      className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200  input-controls"
                     />
                     <ErrorMessage component={'div'} name='email' className='text-red-600 text-sm' />
                   </div>
@@ -156,7 +186,7 @@ export default function SignIn() {
                       type="password"
                       id="password"
                       name="password"
-                      className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200"
+                      className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200   input-controls"
                     />
                     <ErrorMessage component={'div'} name='password' className='text-red-600 text-sm' />
                     <i className="bi bi-eye-fill eye-icon" id='eye-icon' onClick={() => togglePassword()}></i>
@@ -186,8 +216,8 @@ export default function SignIn() {
                     </span>
                     <div className="flex flex-col space-y-4">
                       <a
-                        href="#"
-                        className="flex items-center justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group hover:bg-gray-800 focus:outline-none"
+                        onClick={signInWithGitHub}
+                        className="flex items-center cursor-pointer justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group hover:bg-gray-800 focus:outline-none"
                       >
                         <span>
                           <i className="bi bi-github  w-5 h-5 text-gray-800 fill-current group-hover:text-white"></i>

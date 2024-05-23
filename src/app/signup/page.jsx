@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { object, ref, string } from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { getAuth } from "firebase/auth";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider,GithubAuthProvider } from "firebase/auth";
 import app from "../../../config";
 import { postRequest } from "@/lib/api.service";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 import Loader from "../components/loader";
 
 export default function SignUp() {
@@ -50,12 +51,39 @@ export default function SignUp() {
             showLoader();
 
             if (response.data.status) {
-                sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
                 route.push('/dashboard');
             } else {
                 toast.error(response.data.message);
             }
             setLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const signInWithGitHub = async () => {
+        const auth = getAuth(app);
+        const provider = new GithubAuthProvider();
+        try {
+            const data = await signInWithPopup(auth, provider);
+            console.log(data)
+            // const response = await postRequest("http://localhost:3000/api/auth", {
+            //     email: data.user.email,
+            //     userName: data.user.displayName,
+            //     googleAccount: true
+            // });
+            // showLoader();
+
+            // if (response.data.status) {
+            //     localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+            //     Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+            //     route.push('/dashboard');
+            // } else {
+            //     toast.error(response.data.message);
+            // }
+            // setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -101,12 +129,12 @@ export default function SignUp() {
         postRequest("http://localhost:3000/api/auth", payload).then((response) => {
             showLoader();
             if (response.data.status) {
-                sessionStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
                 route.push('/dashboard');
             } else {
                 toast.error(response.data.message);
             }
-            setLoading(false);
         }).catch(error => {
             console.log(error)
         });
@@ -201,8 +229,8 @@ export default function SignUp() {
                                     </span>
                                     <div className="flex flex-col space-y-4">
                                         <a
-                                            href="#"
-                                            className="flex items-center justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group hover:bg-gray-800 focus:outline-none"
+                                            className="flex items-center cursor-pointer justify-center px-4 py-2 space-x-2 transition-colors duration-300 border border-gray-800 rounded-md group hover:bg-gray-800 focus:outline-none"
+                                            onClick={signInWithGitHub}
                                         >
                                             <span>
                                                 <i className="bi bi-github  w-5 h-5 text-gray-800 fill-current group-hover:text-white"></i>
