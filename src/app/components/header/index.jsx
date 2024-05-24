@@ -7,12 +7,18 @@ export default function Header() {
     const [openMenu, setOpenMenu] = useState(false);
     const route = useRouter();
 
+    const scrollToElement = (e) => {
+        var div = document.getElementById(e);
+        div.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    }
+
 
     useEffect(() => {
-
         addEventListener('scroll', function () {
             // We add pageYOffset for compatibility with IE.
             var scrollTrigger = 50;
+            let sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
             if (window.scrollY >= scrollTrigger) {
                 document.getElementById("header")?.classList.add('header-normal');
                 document.getElementById("header")?.classList.remove('header-advance');
@@ -28,7 +34,22 @@ export default function Header() {
                     x?.classList.remove('text-black');
                 })
             }
+
+            // sections.forEach(section => {
+            //     let top = window.scrollY;
+            //     let sectionTop = section.offsetTop - 60;
+            //     let sectionHeight = section.offsetHeight;
+            //     let sectionId = section.getAttribute('id');
+        
+            //     if (top >= sectionTop && top < sectionTop + sectionHeight) {
+            //         navLinks.forEach(link => {
+            //             link.classList.remove('activeNav');
+            //         });
+            //         document.querySelector(`nav ul li a[href*=${sectionId}]`).classList.add('activeNav');
+            //     }
+            // });
         })
+
     }, []);
 
     function changeTab(tab) {
@@ -60,22 +81,22 @@ export default function Header() {
                     {/* For medium and plus sized devices */}
                     <ul className="hidden md:flex flex space-x-2">
                         <li
-                            onClick={() => changeTab('Home')}
+                            onClick={() => { changeTab('Home'); scrollToElement('hero_section') }}
                             className={`text-white nav-link focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${activeTab == 'Home' ? 'activeNav' : 'text-black'} cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded`}
                         >
-                            Home
+                           <a> Home </a>
                         </li>
                         <li
-                            onClick={() => changeTab('About')}
+                            onClick={() => { changeTab('About'); scrollToElement('about_section') }}
                             className={`text-white nav-link focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${activeTab == 'About' ? 'activeNav' : 'text-black'}   cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded`}
                         >
-                            About us
+                           <a> About us </a>
                         </li>
                         <li
-                            onClick={() => changeTab('Community')}
+                            onClick={() => { changeTab('Community'); scrollToElement('community') }}
                             className={`text-white nav-link focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 ${activeTab == 'Community' ? 'activeNav' : 'text-black'}   cursor-pointer px-3 py-2.5 font-normal text-xs leading-3 rounded`}
                         >
-                            Community
+                           <a>Community</a>
                         </li>
                         {/* <li
                             onClick={() => changeTab('Contact')}
@@ -172,28 +193,22 @@ export default function Header() {
                             className=" font-normal text-base leading-4 absolute top-2  w-full rounded shadow-md"
                         >
                             <li
-                                onClick={() => changeTab('Home')}
+                                onClick={() => { changeTab('Home'); scrollToElement('hero_section') }}
                                 className="px-4 py-3 text-gray-600 bg-gray-50 border border-gray-50 focus:outline-none focus:bg-gray-100 hover:bg-gray-100 duration-100 cursor-pointer text-xs leading-3 font-normal"
                             >
-                                Home
+                                <a>Home</a>
                             </li>
                             <li
-                                onClick={() => changeTab('About')}
+                                onClick={() => { changeTab('About'); scrollToElement('about_section') }}
                                 className="px-4 py-3 text-gray-600 bg-gray-50 border border-gray-50 focus:outline-none focus:bg-gray-100 hover:bg-gray-100 duration-100 cursor-pointer text-xs leading-3 font-normal"
                             >
-                                About us
+                               <a> About us </a>
                             </li>
                             <li
-                                onClick={() => changeTab('Community')}
+                                onClick={() => { changeTab('Community'); scrollToElement('community') }}
                                 className="px-4 py-3 text-gray-600 bg-gray-50 border border-gray-50 focus:outline-none focus:bg-gray-100 hover:bg-gray-100 duration-100 cursor-pointer text-xs leading-3 font-normal"
                             >
-                                Community
-                            </li>
-                            <li
-                                onClick={() => changeTab('Contact')}
-                                className="px-4 py-3 text-gray-600 bg-gray-50 border border-gray-50 focus:outline-none focus:bg-gray-100 hover:bg-gray-100 duration-100 cursor-pointer text-xs leading-3 font-normal"
-                            >
-                                Contact us
+                               <a>Community </a>
                             </li>
                             {/* <li
              onClick={}

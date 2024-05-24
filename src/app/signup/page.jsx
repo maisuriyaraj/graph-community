@@ -19,16 +19,16 @@ export default function SignUp() {
     const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
-        const auth = getAuth(app);
-        const unsubscribe = auth.onAuthStateChanged((data) => {
-            if (data) {
-                console.log(data);
-            } else {
-                console.log("nothing");
-            }
-        });
+        // const auth = getAuth(app);
+        // const unsubscribe = auth.onAuthStateChanged((data) => {
+        //     if (data) {
+        //         console.log(data);
+        //     } else {
+        //         console.log("nothing");
+        //     }
+        // });
 
-        return unsubscribe;
+        // return unsubscribe;
     }, []);
 
     const showLoader = () => {
@@ -69,21 +69,21 @@ export default function SignUp() {
         try {
             const data = await signInWithPopup(auth, provider);
             console.log(data)
-            // const response = await postRequest("http://localhost:3000/api/auth", {
-            //     email: data.user.email,
-            //     userName: data.user.displayName,
-            //     googleAccount: true
-            // });
-            // showLoader();
+            const response = await postRequest("http://localhost:3000/api/auth", {
+                email: data.user.email,
+                userName: data.user.displayName,
+                githubAccount: true
+            });
+            showLoader();
 
-            // if (response.data.status) {
-            //     localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
-            //     Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
-            //     route.push('/dashboard');
-            // } else {
-            //     toast.error(response.data.message);
-            // }
-            // setLoading(false);
+            if (response.data.status) {
+                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+                Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+                route.push('/dashboard');
+            } else {
+                toast.error(response.data.message);
+            }
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }

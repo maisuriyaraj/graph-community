@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Header />
-      <div className={"w-full relative"} id="hero_section" style={{ backgroundImage: `url(${img.src})`, }}>
+      <section className={"w-full relative"} id="hero_section" style={{ backgroundImage: `url(${img.src})`, }}>
         <div className="w-full hero-title-div px-16 absolute top-0">
           <div className="title-div  mt-40 text-start" data-aos="fade-right" data-aos-duration="2000">
             <h1 className="hero-logo">Graph  </h1>
@@ -28,9 +28,9 @@ export default function Home() {
             <h5 className="slogen">Make your Happy 😊 , Strong Connections  </h5>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="w-full mt-16" id="about_section" >
+      <section className="w-full mt-16" id="about_section" >
         <div className="text-center">
           <span className="hero-title-about">About Us</span>
         </div>
@@ -95,9 +95,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="w-full" id="community" >
+      <section className="w-full" id="community" >
         <div className="text-center">
           <span className="hero-title-about">Community</span>
         </div>
@@ -163,7 +163,7 @@ export default function Home() {
           </div>
 
         </div>
-      </div>
+      </section>
 
       <Footer />
     </main>

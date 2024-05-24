@@ -15,11 +15,35 @@ export async function POST(request) {
             return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
         }
 
-        let user = await userModel.findOne({ email: payload.email });
-        if (user) {
-            return NextResponse.json({ status: false, message: 'User has already registered !'});
-        } else {
-            // User Sign Up
+        let user = await userModel.findOne({ email: payload.email }).select({ email: 1, password: 1 });
+        if (user && payload.googleAccount) {
+            // If User try to sign up with registered Google Account (It will directly loggedIn user)
+            let tokenData = await AuthTableModel.findOne({ user_id: user._id });
+            let token = tokenData?.access_token;
+
+            try {
+                jwt.verify(token, secreate_key);
+                console.log("TOKEN VERIFIED !!")
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token });
+            } catch (err) {
+                // Token expired or invalid
+                let newToken = jwt.sign({ email: payload.email }, secreate_key, { expiresIn: '7d' });
+
+                const updateData = { access_token: newToken };
+                if (payload?.device_token) {
+                    updateData.device_token = payload.device_token;
+                }
+
+                await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
+                console.log("TOKEN EXPIRED AND NEW GENERATED !!")
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken });
+            }
+        } else if (user ) {
+             // It user Enteres Registered Email
+             return NextResponse.json({ status: false, message: 'User has already registered !' });
+        }
+        else {
+            // User Sign Up (If this User is new user)
             let userBody = { email: payload.email };
 
             if (payload?.password) {
@@ -68,7 +92,8 @@ export async function PUT(request) {
             return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
         }
 
-        let user = await userModel.findOne({ email: payload.email });
+        let user = await userModel.findOne({ email: payload.email }).select({ email: 1, password: 1 });
+        console.log(user)
         if (user) {
             // User Log In
             if (payload.password) {
@@ -98,7 +123,7 @@ export async function PUT(request) {
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
                 return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken });
             }
-        }else{
+        } else {
             return NextResponse.json({ status: false, message: "User Does Not Exists !!" });
         }
     } catch (error) {

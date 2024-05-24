@@ -9,7 +9,7 @@ const override = {
 
 export default function Loader(props) {
   return (
-    <BarLoader color='red' cssOverride={override} height={'4px'} width={'100%'} loading={props.isLoading}   aria-label="Loading Spinner"
+    <BarLoader color='#22c55e' cssOverride={override} height={'4px'} width={'100%'} loading={props.isLoading}   aria-label="Loading Spinner"
     data-testid="loader" />
   )
 }

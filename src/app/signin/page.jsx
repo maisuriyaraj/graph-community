@@ -17,6 +17,7 @@ import Loader from '../components/loader';
 export default function SignIn() {
   const route = useRouter();
   const [isLoading, setLoading] = useState(false);
+  const [isUnauthorized,setAuthorized] = useState(false);
   useEffect(() => {
     
   }, []);
@@ -61,21 +62,21 @@ export default function SignIn() {
     try {
         const data = await signInWithPopup(auth, provider);
         console.log(data)
-        // const response = await postRequest("http://localhost:3000/api/auth", {
-        //     email: data.user.email,
-        //     userName: data.user.displayName,
-        //     googleAccount: true
-        // });
-        // showLoader();
+        const response = await postRequest("http://localhost:3000/api/auth", {
+            email: data.user.email,
+            userName: data.user.displayName,
+            githubAccount: true
+        });
+        showLoader();
 
-        // if (response.data.status) {
-        //     localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
-        //     Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
-        //     route.push('/dashboard');
-        // } else {
-        //     toast.error(response.data.message);
-        // }
-        // setLoading(false);
+        if (response.data.status) {
+            localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
+            Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+            route.push('/dashboard');
+        } else {
+            toast.error(response.data.message);
+        }
+        setLoading(false);
     } catch (error) {
         console.log(error);
     }
@@ -112,14 +113,15 @@ export default function SignIn() {
       password: formData.password
     }
 
+    showLoader();
     putRequest("http://localhost:3000/api/auth", payload).then((response) => {
-      showLoader();
       if (response.data.status) {
         localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
         Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
 
         route.push('/dashboard');
       }else if(response.data.code == 501){
+        setAuthorized(true);
         let inputs  = document.querySelectorAll('.input-controls');
         console.log(inputs)
         if(inputs){
@@ -176,6 +178,7 @@ export default function SignIn() {
                       className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200  input-controls"
                     />
                     <ErrorMessage component={'div'} name='email' className='text-red-600 text-sm' />
+                   {isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your Email address. </div>}
                   </div>
                   <div className="flex flex-col space-y-1 relative">
                     <div className="flex items-center justify-between">
@@ -189,6 +192,7 @@ export default function SignIn() {
                       className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200   input-controls"
                     />
                     <ErrorMessage component={'div'} name='password' className='text-red-600 text-sm' />
+                    { isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your password. </div>}
                     <i className="bi bi-eye-fill eye-icon" id='eye-icon' onClick={() => togglePassword()}></i>
                   </div>
                   <div className="flex items-center space-x-2">
