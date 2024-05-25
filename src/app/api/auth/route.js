@@ -6,6 +6,7 @@ import { AuthTableModel, userModel } from "@/lib/models";
 const secreate_key = "akfnkdfkdjf-+-+--+-+skdfbs d sxcdvhjkdfghjkdfghjkdfghjklfghjkl852852741063!@#$%!@#$%^@#$%^@#$%^&%^&*(^&*()*()&*)";
 
 
+// User Sign Up
 export async function POST(request) {
     try {
         const payload = await request.json();
@@ -82,6 +83,8 @@ export async function POST(request) {
         return NextResponse.json({ status: false, message: "Unable to Provide Services!" });
     }
 }
+
+// User Log in 
 
 export async function PUT(request) {
     try {

@@ -14,6 +14,13 @@ export function middleware(request) {
 
   let isUser = userCookie !== null;
 
+  // If user has already logged in. it will redirect user to direct Dashboard
+  if(isUser && (request.nextUrl.pathname === '/signin' || request.nextUrl.pathname === '/signup' ) ){
+    console.log("isAlreadyLoggedIn")
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // If user is Unauthorized .it will redirect user to public lending page (Home Page)
   if (!isUser && request.nextUrl.pathname === '/dashboard') {
     // PROTECT PAGE FROM UNAUTHORIZED ACCESS
     return NextResponse.redirect(new URL("/", request.url));
@@ -25,5 +32,5 @@ export function middleware(request) {
 
 // Define the matcher to apply this middleware to specific routes
 export const config = {
-  matcher: ['/dashboard/:path*'],  // Apply middleware to /dashboard and its subroutes
+  matcher: ['/dashboard/:path*','/signin','/signup'],  // Apply middleware to /dashboard and its subroutes
 };

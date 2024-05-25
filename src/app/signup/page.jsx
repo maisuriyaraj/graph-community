@@ -51,7 +51,6 @@ export default function SignUp() {
             showLoader();
 
             if (response.data.status) {
-                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
                 Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
                 route.push('/dashboard');
             } else {
@@ -77,7 +76,6 @@ export default function SignUp() {
             showLoader();
 
             if (response.data.status) {
-                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
                 Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
                 route.push('/dashboard');
             } else {
@@ -129,7 +127,6 @@ export default function SignUp() {
         postRequest("http://localhost:3000/api/auth", payload).then((response) => {
             showLoader();
             if (response.data.status) {
-                localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
                 Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
                 route.push('/dashboard');
             } else {

@@ -42,7 +42,6 @@ export default function SignIn() {
       showLoader();
 
       if (response.data.status) {
-        localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
         Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
         setTimeout(() => {
           route.push('/dashboard');
@@ -70,7 +69,6 @@ export default function SignIn() {
         showLoader();
 
         if (response.data.status) {
-            localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
             Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
             route.push('/dashboard');
         } else {
@@ -116,7 +114,6 @@ export default function SignIn() {
     showLoader();
     putRequest("http://localhost:3000/api/auth", payload).then((response) => {
       if (response.data.status) {
-        localStorage.setItem('AuthToken', JSON.stringify(`Bearer ${response.data.token}`));
         Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
 
         route.push('/dashboard');
