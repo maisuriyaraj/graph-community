@@ -1,0 +1,24 @@
+.logo {
+    color: #16a34a;
+    font-size: 25px;
+    font-family: "Abril Fatface", serif;
+
+    span {
+        font-size: 18px;
+        color: black;
+        font-family: "Courgette", cursive;
+    }
+
+}
+
+#headerMain{
+    .activeFilter{
+        border-right: solid 4px #16a34a;
+    }
+
+    @media screen and (max-width:991px) {
+        #filter-dropdown{
+            display: none;
+        }
+    }
+}

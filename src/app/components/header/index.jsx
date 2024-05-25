@@ -1,7 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import logo1 from '../../../../public/logo-white.png';
+import logo2 from '../../../../public/logo-2.png';
+import Image from "next/image";
 export default function Header() {
     const [activeTab, setActive] = useState('Home');
     const [openMenu, setOpenMenu] = useState(false);
@@ -77,6 +79,7 @@ export default function Header() {
                         <h2 className="font-normal logo text-2xl leading-6" id='logo'>
                             Graph <span>Community</span>
                         </h2>
+                        {/* <Image src={logo2} id="logo" alt="logo" width={100} /> */}
                     </div>
                     {/* For medium and plus sized devices */}
                     <ul className="hidden md:flex flex space-x-2">
