@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     email: { 
         type: String, 
-        required: true, 
         unique: true, 
         match: [/.+\@.+\..+/, 'Please fill a valid email address'] 
     },
-    userName: { type: String, trim: true },
+    userName: { type: String, trim: true,unique:true },
     password: { type: String, select: false },
     googleAccount: { type: Boolean, default: false },
     githubAccount: { type: Boolean, default: false },
@@ -18,6 +17,8 @@ const userSchema = new mongoose.Schema({
     job_description: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },
+    isEmailVerified:{type:Boolean,default:false},
+    isMobileVerified:{type:Boolean,default:false}
 }, { timestamps: true });
 
 export const userModel = mongoose.models.users ||  mongoose.model('users', userSchema);

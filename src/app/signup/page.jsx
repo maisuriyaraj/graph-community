@@ -46,7 +46,8 @@ export default function SignUp() {
             const response = await postRequest("http://localhost:3000/api/auth", {
                 email: data.user.email,
                 userName: data.user.displayName,
-                googleAccount: true
+                googleAccount: true,
+                profile_picture:data.user.photoURL
             });
             showLoader();
 
@@ -71,7 +72,8 @@ export default function SignUp() {
             const response = await postRequest("http://localhost:3000/api/auth", {
                 email: data.user.email,
                 userName: data.user.displayName,
-                githubAccount: true
+                githubAccount: true,
+                profile_picture:data.user.photoURL
             });
             showLoader();
 

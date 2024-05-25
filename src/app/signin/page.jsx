@@ -5,7 +5,7 @@ import './signIn.css';
 import { object, ref, string } from 'yup';
 import { Field, Form, ErrorMessage, Formik } from 'formik';
 import { getAuth } from "firebase/auth";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import app from "../../../config";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,9 +17,10 @@ import Loader from '../components/loader';
 export default function SignIn() {
   const route = useRouter();
   const [isLoading, setLoading] = useState(false);
-  const [isUnauthorized,setAuthorized] = useState(false);
+  const [isUnauthorized, setAuthorized] = useState(false);
+
   useEffect(() => {
-    
+
   }, []);
 
   const showLoader = () => {
@@ -42,7 +43,7 @@ export default function SignIn() {
       showLoader();
 
       if (response.data.status) {
-        Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+        Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
         setTimeout(() => {
           route.push('/dashboard');
         }, 3000);
@@ -59,26 +60,26 @@ export default function SignIn() {
     const auth = getAuth(app);
     const provider = new GithubAuthProvider();
     try {
-        const data = await signInWithPopup(auth, provider);
-        console.log(data)
-        const response = await postRequest("http://localhost:3000/api/auth", {
-            email: data.user.email,
-            userName: data.user.displayName,
-            githubAccount: true
-        });
-        showLoader();
+      const data = await signInWithPopup(auth, provider);
+      console.log(data)
+      const response = await putRequest("http://localhost:3000/api/auth", {
+        email: data.user.email,
+        userName: data.user.displayName,
+        githubAccount: true
+      });
+      showLoader();
 
-        if (response.data.status) {
-            Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
-            route.push('/dashboard');
-        } else {
-            toast.error(response.data.message);
-        }
-        setLoading(false);
+      if (response.data.status) {
+        Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
+        route.push('/dashboard');
+      } else {
+        toast.error(response.data.message);
+      }
+      setLoading(false);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  }
 
   const initialValues = {
     email: "",
@@ -89,6 +90,7 @@ export default function SignIn() {
     email: string().required("Email is Required !").email("Invalid Email"),
     password: string().required("Password is Required !").min(6, "Password must be 6 to 10 character long !.").max(10, "Password must be 6 to 10 character long !."),
   })
+
   const togglePassword = () => {
     let input = document.getElementById("password");
     let eye = document.getElementById('eye-icon');
@@ -114,15 +116,15 @@ export default function SignIn() {
     showLoader();
     putRequest("http://localhost:3000/api/auth", payload).then((response) => {
       if (response.data.status) {
-        Cookies.set('AuthToken',JSON.stringify(`Bearer ${response.data.token}`,{ expires: 7 }));
+        Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
 
         route.push('/dashboard');
-      }else if(response.data.code == 501){
+      } else if (response.data.code == 501) {
         setAuthorized(true);
-        let inputs  = document.querySelectorAll('.input-controls');
+        let inputs = document.querySelectorAll('.input-controls');
         console.log(inputs)
-        if(inputs){
-          inputs.forEach((x)=>{
+        if (inputs) {
+          inputs.forEach((x) => {
             x.classList.add('err-Boxes');
           });
         }
@@ -175,7 +177,7 @@ export default function SignIn() {
                       className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200  input-controls"
                     />
                     <ErrorMessage component={'div'} name='email' className='text-red-600 text-sm' />
-                   {isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your Email address. </div>}
+                    {isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your Email address. </div>}
                   </div>
                   <div className="flex flex-col space-y-1 relative">
                     <div className="flex items-center justify-between">
@@ -189,7 +191,7 @@ export default function SignIn() {
                       className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200   input-controls"
                     />
                     <ErrorMessage component={'div'} name='password' className='text-red-600 text-sm' />
-                    { isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your password. </div>}
+                    {isUnauthorized && <div className='text-red-600 text-sm'> <i className="bi bi-exclamation-circle"></i> &nbsp; Please Check your password. </div>}
                     <i className="bi bi-eye-fill eye-icon" id='eye-icon' onClick={() => togglePassword()}></i>
                   </div>
                   <div className="flex items-center space-x-2">
