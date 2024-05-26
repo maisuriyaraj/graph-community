@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import '../../global.css';
-import avatar from '../../../../../public/avatar.png'
+import avatar from '../../../../../public/user.png'
 import { useState } from "react";
 
 
@@ -91,7 +91,12 @@ export default function MainHeader() {
         </div>
         <div className="w-1/2 flex items-center justify-end h-12">
           <div className="mx-2 relative cursor-pointer">
-            <Image src={avatar} alt="avatar" width={'50px'} />
+            <button className="bg-white rounded-lg transition-all w-full text-green-600 border border-solid border-green-600 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded inline-flex items-center">
+              <a className="" href="#"> <i class="bi bi-plus-circle"></i> New Community </a>
+            </button>
+          </div>
+          <div className="mx-2 relative cursor-pointer" title="Profile">
+            <Image src={avatar} alt="avatar" width={20} />
             <div className="absolute top-0 right-0 -mr-1 -mt-1 w-2 h-2 rounded-full bg-green-500 animate-ping"></div>
             <div className="absolute top-0 right-0 -mr-1 -mt-1 w-2 h-2 rounded-full bg-green-600"></div>
           </div>
@@ -163,8 +168,8 @@ export default function MainHeader() {
               </div>
             </div>
           </div>
-          <div className="mx-2 relative cursor-pointer">
-            <div className="dropdown mx-2 inline-block relative">
+          <div className="mx-2 relative cursor-pointer" title="Theme">
+            {/* <div className="dropdown mx-2 inline-block relative">
               <button onClick={() => setOpenTheme(!openTheme)} className="bg-green-600 w-full text-white py-2 px-4 rounded inline-flex items-center">
                 <span className="mx-1">{Theme == 'Light' && <i className="bi bi-brightness-high"></i>}{Theme == 'Dark' && <i className="bi bi-moon"></i>}</span>
                 <span className="mr-1">{Theme}</span>
@@ -196,6 +201,10 @@ export default function MainHeader() {
                   </a>
                 </li>
               </ul>}
+            </div> */}
+            <div className="toggle">
+              <input type="checkbox" />
+              <label></label>
             </div>
           </div>
         </div>
