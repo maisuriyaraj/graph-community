@@ -88,5 +88,13 @@ span{
 }
 
 #sideNav{
-
+  .nav-link{
+    transition: 0.3s ease-in;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+  }
+  .activePath{
+    border-right: 3px solid #16a34a;
+    background-color: #e5e7eb;
+  }
 }
