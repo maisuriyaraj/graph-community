@@ -92,7 +92,7 @@ export default function MainHeader() {
         <div className="w-1/2 flex items-center justify-end h-12">
           <div className="mx-2 relative cursor-pointer">
             <button className="bg-white rounded-lg transition-all w-full text-green-600 border border-solid border-green-600 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded inline-flex items-center">
-              <a className="" href="#"> <i class="bi bi-plus-circle"></i> New Community </a>
+              <a className="" href="#"> <i className="bi bi-plus-circle"></i> New Community </a>
             </button>
           </div>
           <div className="mx-2 relative cursor-pointer" title="Profile">

@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { AuthTableModel, userModel } from "@/lib/models";
+import { NextApiRequest } from 'next';
 
-const secreate_key = "akfnkdfkdjf-+-+--+-+skdfbs d sxcdvhjkdfghjkdfghjkdfghjklfghjkl852852741063!@#$%!@#$%^@#$%^@#$%^&%^&*(^&*()*()&*)";
-
+// const secreate_key = "akfnkdfkdjf-+-+--+-+skdfbs d sxcdvhjkdfghjkdfghjkdfghjklfghjkl852852741063!@#$%!@#$%^@#$%^@#$%^&%^&*(^&*()*()&*)";
+const secreate_key = process.env.SECREATE_KEY
 
 // User Sign Up
 export async function POST(request) {
@@ -28,12 +29,12 @@ export async function POST(request) {
             let token = tokenData?.access_token;
 
             try {
-                jwt.verify(token, secreate_key);
+                let  user = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:user.userId });
             } catch (err) {
                 // Token expired or invalid
-                let newToken = jwt.sign({ email: payload.email }, secreate_key, { expiresIn: '7d' });
+                let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
 
                 const updateData = { access_token: newToken };
                 if (payload?.device_token) {
@@ -42,7 +43,7 @@ export async function POST(request) {
 
                 await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken ,userId:user._id});
             }
         }
         else if (user && payload.githubAccount) {
@@ -51,12 +52,12 @@ export async function POST(request) {
             let token = tokenData?.access_token;
 
             try {
-                jwt.verify(token, secreate_key);
+                let  user = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:user.userId });
             } catch (err) {
                 // Token expired or invalid
-                let newToken = jwt.sign({ email: payload.email }, secreate_key, { expiresIn: '7d' });
+                let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
 
                 const updateData = { access_token: newToken };
                 if (payload?.device_token) {
@@ -65,7 +66,7 @@ export async function POST(request) {
 
                 await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
             }
         }
         else if (user) {
@@ -89,14 +90,14 @@ export async function POST(request) {
             if (payload?.githubAccount) {
                 userBody.githubAccount = payload.githubAccount;
             }
-            if(payload?.profile_picture){
+            if (payload?.profile_picture) {
                 userBody.profile_picture = payload.profile_picture;
             }
 
             const newUser = new userModel(userBody);
             const result = await newUser.save();
 
-            const newToken = jwt.sign({ email: payload.email }, secreate_key, { expiresIn: '7d' });
+            const newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
 
             const authTableBody = {
                 user_id: result._id,
@@ -108,7 +109,7 @@ export async function POST(request) {
             const newAuthRecord = new AuthTableModel(authTableBody);
             await newAuthRecord.save();
 
-            return NextResponse.json({ status: true, message: "User Registered Successfully!", token: newToken });
+            return NextResponse.json({ status: true, message: "User Registered Successfully!", token: newToken ,userId:result._id});
         }
     } catch (error) {
         console.error(error);
@@ -147,12 +148,12 @@ export async function PUT(request) {
             let token = tokenData?.access_token;
 
             try {
-                jwt.verify(token, secreate_key);
+                let  user = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
             } catch (err) {
                 // Token expired or invalid
-                let newToken = jwt.sign({ email: payload.email }, secreate_key, { expiresIn: '7d' });
+                let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
 
                 const updateData = { access_token: newToken };
                 if (payload?.device_token) {
@@ -161,7 +162,7 @@ export async function PUT(request) {
 
                 await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
             }
         } else {
             return NextResponse.json({ status: false, message: "User Does Not Exists !!" });

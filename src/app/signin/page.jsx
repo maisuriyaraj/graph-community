@@ -44,6 +44,8 @@ export default function SignIn() {
 
       if (response.data.status) {
         Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
+        Cookies.set('userId', JSON.stringify(response.data.userId, { expires: 7 }));
+
         setTimeout(() => {
           route.push('/dashboard');
         }, 3000);
@@ -71,6 +73,8 @@ export default function SignIn() {
 
       if (response.data.status) {
         Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
+        Cookies.set('userId', JSON.stringify(response.data.userId, { expires: 7 }));
+
         route.push('/dashboard');
       } else {
         toast.error(response.data.message);
@@ -117,6 +121,8 @@ export default function SignIn() {
     putRequest("http://localhost:3000/api/auth", payload).then((response) => {
       if (response.data.status) {
         Cookies.set('AuthToken', JSON.stringify(`Bearer ${response.data.token}`, { expires: 7 }));
+        Cookies.set('userId', JSON.stringify(response.data.userId, { expires: 7 }));
+
 
         route.push('/dashboard');
       } else if (response.data.code == 501) {
