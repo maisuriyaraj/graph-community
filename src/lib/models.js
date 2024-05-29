@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         unique: true, 
         match: [/.+\@.+\..+/, 'Please fill a valid email address'] 
     },
-    userName: { type: String, trim: true,unique:true },
+    userName: { type: String, trim: true,unique:true,default:null },
     password: { type: String, select: false },
     googleAccount: { type: Boolean, default: false },
     githubAccount: { type: Boolean, default: false },
