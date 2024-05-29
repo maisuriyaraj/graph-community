@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-export function getRequest(url, payload, headers) {
+export function getRequest(url, headers) {
     return new Promise((resolve, reject) => {
-        axios.get(url, payload, { headers }).then((response) => {
+        axios.get(url, { headers:headers }).then((response) => {
             console.log(response);
             resolve(response)
         }).catch(err => {
@@ -12,7 +12,7 @@ export function getRequest(url, payload, headers) {
     });
 };
 
-export const  postRequest =   (url,payload={},headers={}) => {
+export const  postRequest = (url,payload,headers) => {
     return new Promise((resolve,reject)=>{
          try {
              axios.post(url,payload,{headers:headers}).then((response)=>{
@@ -38,7 +38,7 @@ export function putRequest(url, payload, headers) {
     });
 };
 
-export function deleteRequest(url, payload, headers) {
+export function deleteRequest(url, headers) {
     return new Promise((resolve, reject) => {
         axios.delete(url, payload, { headers }).then((response) => {
             console.log(response);

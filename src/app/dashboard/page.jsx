@@ -18,14 +18,11 @@ export default function Dashboard() {
     }
   }, []);
 
-
-  useEffect(()=>{
-    console.log("><><><><><><><><><><><",loggedUser);
-  },[loggedUser]);
-
   function getUserData(){
     const userData = JSON.parse(Cookies.get('userId'));
-    getRequest(`http://localhost:3000/api/user/${userData}`).then((response) => {
+    const BearerToken = JSON.parse(Cookies.get('AuthToken'));
+    const AuthToken = BearerToken.split(' ')[1];
+    getRequest(`http://localhost:3000/api/user/${userData}`,{'Authorization':AuthToken}).then((response) => {
       setUser(response.data.data);
      
     }).catch((error) => {
