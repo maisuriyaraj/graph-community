@@ -30,11 +30,14 @@ async function getUserData() {
     }
   });
 
-  return response.json();
+  if(response.ok){
+    return response.json();
+  }
+
 }
 
 
-export default async  function DashBoardLayout({ children }) {
+export default async function DashBoardLayout({ children }) {
   const userData = await  getUserData();
   return (
     <html lang="en">

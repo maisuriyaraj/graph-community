@@ -7,7 +7,6 @@ import Link from 'next/link';
 
 
 export default function SideNav({userData}) {
-  console.log("MY PROPSSSSSSSSSSSSSSSSSS",userData)
   return (
     <div className='w-64 bg-white fixed border top-0 border-solid border-r-[#e5e7eb] left-0 h-[100vh]' id='sideNav'>
       <div className='flex flex-col items-center justify-center border-b mt-24 p-8 cursor-pointer'>
@@ -17,7 +16,7 @@ export default function SideNav({userData}) {
 
         </div>
         <div className='text-center mt-1'>
-          <p className='font-bold text-xl'>{userData.data.userName}</p>
+          <p className='font-bold text-xl'>{userData?.data?.userName}</p>
           <span className='text-sm font-semibold text-gray-600'>Co-Manager</span>
         </div>
       </div>

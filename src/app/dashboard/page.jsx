@@ -6,6 +6,7 @@ import running from '../../../public/running.svg';
 import verification from '../../../public/verification.svg';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const [loggedInUserId, setUserId] = useState(null);
@@ -40,7 +41,7 @@ export default function Dashboard() {
           <div className='text-white'>
             <h2 className='text-white title-card'>Email Verification</h2>
             <p>Please Complete Your Email Verification.</p>
-            <a href='#' className='text-white mt-3 underline font-bold'>Verify Now</a>
+            <Link href='/dashboard/profile' className='text-white mt-3 underline font-bold'>Verify Now</Link>
           </div>
           <div className='pt-2'>
             <Image src={running} alt='running' width={180} />
@@ -50,7 +51,7 @@ export default function Dashboard() {
         <div className='text-black'>
             <h2 className='text-green-600 title-card'>Phone Verification</h2>
             <p>Please Complete Your Mobile Number Verification.</p>
-            <a href='#' className='text-black mt-3 underline font-bold'>Verify Now</a>
+            <Link href='/dashboard/profile' className='text-black mt-3 underline font-bold'>Verify Now</Link>
           </div>
           <div className='pt-2'>
             <Image src={verification} alt='running' width={180} />

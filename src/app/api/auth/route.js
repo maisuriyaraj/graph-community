@@ -11,7 +11,6 @@ const secreate_key = process.env.SECREATE_KEY
 export async function POST(request) {
     try {
         const payload = await request.json();
-        console.log(payload);
 
         // if (!payload.email) {
         //     return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
@@ -52,9 +51,9 @@ export async function POST(request) {
             let token = tokenData?.access_token;
 
             try {
-                let  user = jwt.verify(token, secreate_key);
+                let  auth = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:user.userId });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:auths.userId });
             } catch (err) {
                 // Token expired or invalid
                 let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
@@ -122,7 +121,6 @@ export async function POST(request) {
 export async function PUT(request) {
     try {
         const payload = await request.json();
-        console.log(payload);
 
         // if (!payload.email) {
         //     return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
@@ -134,7 +132,6 @@ export async function PUT(request) {
                 { userName: payload.userName }
             ]
         }).select({ email: 1, password: 1, userName: 1 });
-        console.log(user)
         if (user) {
             // User Log In
             if (payload.password) {
@@ -149,7 +146,8 @@ export async function PUT(request) {
 
             try {
                 let  user = jwt.verify(token, secreate_key);
-                console.log("TOKEN VERIFIED !!")
+                console.log("TOKEN VERIFIED");
+                console.log("this is User",user);
                 return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
             } catch (err) {
                 // Token expired or invalid

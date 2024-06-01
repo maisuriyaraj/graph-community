@@ -3,11 +3,12 @@ import Image from "next/image";
 import '../../global.css';
 import avatar from '../../../../../public/user.png'
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 
 export default function MainHeader() {
   const [open, setOpen] = useState(false);
   const [openTheme, setOpenTheme] = useState(false);
+  const navigate = useRouter();
 
   const [Theme, setTheme] = useState('Theme');
 
@@ -33,6 +34,10 @@ export default function MainHeader() {
     }
   }
 
+  function goToHome(path){
+    navigate.push(path);
+}
+
   const changeTheme = (theme) => {
     setTheme(theme)
     setOpenTheme(false);
@@ -41,7 +46,7 @@ export default function MainHeader() {
     <div className='w-full bg-white border border-solid  fixed top-0 py-4 px-12' id="headerMain">
       <nav className="w-full flex items-center px-4">
         <div className="w-1/6 cursor-pointer text-start space-x-3 lg:pr-16 pr-6">
-          <h2 className="font-normal logo text-2xl leading-6" id='logo'>
+          <h2 className="font-normal logo text-2xl leading-6" id='logo' onClick={() => {goToHome('/dashboard')}}>
             Graph <span>Community</span>
           </h2>
           {/* <Image src={logo2} id="logo" alt="logo" width={100} /> */}
