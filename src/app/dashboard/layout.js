@@ -7,19 +7,14 @@ import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: "Good Morning [User Name]",
-  description: "",
-};
-
 async function getUserData() {
   // Retrieve user data and bearer token from cookies
-  const userData = JSON.parse(cookies().get("userId").value);
+  const userId = JSON.parse(cookies().get("userId").value);
   const BearerToken = JSON.parse(cookies().get("AuthToken").value);
   const AuthToken = BearerToken.split(' ')[1];
 
   // Define the API endpoint
-  const url = `http://localhost:3000/api/user/${userData}`;
+  const url = `http://localhost:3000/api/user/${userId}`;
 
   // Make the fetch request
   const response = await fetch(url, {
@@ -36,11 +31,19 @@ async function getUserData() {
 
 }
 
+export const metadata = {
+  title: `Good Morning`,
+  description: "",
+};
+
 
 export default async function DashBoardLayout({ children }) {
   const userData = await  getUserData();
   return (
     <html lang="en">
+      <head>
+        <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
+      </head>
       <body className={inter.className}><SideNav userData={userData} /><MainHeader /><div className="ml-[16rem] mt-32">{children}</div></body>
     </html>
   );

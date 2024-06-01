@@ -144,7 +144,7 @@ export default function SignUp() {
         });
     }
     return (
-        <div className='w-full' id='signIn'>
+        <main className='w-full' id='signIn'>
             <ToastContainer />
             {isLoading && <Loader isLoading={isLoading} />}
             <div className="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
@@ -262,6 +262,6 @@ export default function SignUp() {
                 </div>
             </div>
 
-        </div>
+        </main>
     )
 }

@@ -5,7 +5,6 @@ import '../../global.css';
 import Link from 'next/link';
 
 
-
 export default function SideNav({userData}) {
   return (
     <div className='w-64 bg-white fixed border top-0 border-solid border-r-[#e5e7eb] left-0 h-[100vh]' id='sideNav'>
