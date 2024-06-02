@@ -1,5 +1,5 @@
 "use client";
-import { getRequest } from '@/lib/api.service';
+import { getRequest, postRequest } from '@/lib/api.service';
 import Cookies from 'js-cookie';
 import { useEffect, useRef, useState } from 'react';
 import running from '../../../public/running.svg';
@@ -10,12 +10,15 @@ import Link from 'next/link';
 import GraphModal from '../components/modal';
 import GraphFieldTextModal from '../components/Fieldmodal';
 import Head from 'next/head';
+import { EmailVerificationMail } from '@/lib/mailService';
 
 export default function Dashboard() {
   const [loggedInUserId, setUserId] = useState(null);
   const [loggedUser, setUser] = useState(null);
   const [openModal, setModal] = useState(false);
   const [modalTitle, setModalTitle] = useState();
+  const [modalLoader,setModalLoader] = useState(false);
+  const [modalType,setModalType] = useState();
   const [textField, setTextField] = useState();
   const [fieldType, setFieldType] = useState();
   const [fieldValue, setFieldValue] = useState();
@@ -45,11 +48,13 @@ export default function Dashboard() {
   function openVerificationModal(modalName) {
     if (modalName == "Email") {
       setFieldType("email");
+      setModalType('Email')
       setModalTitle("Email Verification");
       setTextField("Email Address");
       setModal(true);
     } else {
       setFieldType("text");
+      setModalType('Phone');
       setModalTitle("Mobile Verification");
       setTextField("Mobile Number");
       setModal(true);
@@ -60,13 +65,28 @@ export default function Dashboard() {
     setModal(false);
   }
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = (event,type) => {
+
     event.preventDefault();
     console.log("Submitted", event?.target[0].value);
     // setModal(false);
-    setFieldValue(event?.target[0].value, () => {
-      console.log(fieldValue);
-    });
+    if(type == 'Email'){
+        console.log("Email Sent Successfully");
+        let mailBody = EmailVerificationMail;
+        const payload = {
+          email:event?.target[0].value,
+          mailBody:mailBody
+        }
+        postRequest('http://localhost:3000/api/mail',payload).then((res)=>{
+          console.log(res);
+        }).catch((error)=>{
+          console.log(error);
+        })
+    }else{
+      console.log("SMS Sent Successfully");
+    }
+    setModalLoader(true);
+    setFieldValue(event?.target[0].value);
   }
 
   return (
@@ -100,7 +120,7 @@ export default function Dashboard() {
           <GraphModal  closeModal={closeModal} />
       </div>} */}
       {openModal && <div>
-        <GraphFieldTextModal closeModal={closeModal} modalTitle={modalTitle} textField={textField} fieldType={fieldType} handleFormSubmit={handleFormSubmit} />
+        <GraphFieldTextModal closeModal={closeModal} loader={modalLoader} modalTitle={modalTitle} textField={textField} fieldType={fieldType} modalType={modalType} handleFormSubmit={handleFormSubmit} />
       </div>}
     </main>
   )

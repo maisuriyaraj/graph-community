@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 import { postRequest, putRequest } from '@/lib/api.service';
 import { useRouter } from 'next/navigation';
-import Loader from '../components/loader';
+import {Loader} from '../components/loader';
 
 export default function SignIn() {
   const route = useRouter();

@@ -4,6 +4,8 @@ import SideNav from "./components/sidenav";
 import './global.css';
 import MainHeader from "./components/header";
 import { cookies } from "next/headers";
+import Script from "next/script";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,9 +43,9 @@ export default async function DashBoardLayout({ children }) {
   const userData = await  getUserData();
   return (
     <html lang="en">
-      <head>
-        <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
-      </head>
+      <Head>
+        <Script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></Script>
+      </Head>
       <body className={inter.className}><SideNav userData={userData} /><MainHeader /><div className="ml-[16rem] mt-32">{children}</div></body>
     </html>
   );

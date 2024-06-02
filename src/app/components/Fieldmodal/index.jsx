@@ -1,16 +1,21 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { HashLoaderComponent } from '../loader';
+import Image from 'next/image';
+import Check from '../../../../public/check.gif';
 
 export default function GraphFieldTextModal(props) {
 
   const [authAnimation, setAnimation] = useState();
+  const [loader,setLoader] = useState(false);
+  const [isSubmitted,setSubmitted] = useState(false);
 
   useEffect(() => {
     openAuthModal();
   }, []);
 
   useEffect(()=>{
-    openAuthModal();
+    // openAuthModal();
     console.log(props)
   },[props])
 
@@ -30,6 +35,16 @@ export default function GraphFieldTextModal(props) {
       props.closeModal();
     }, 900);
   }
+
+  function handleSubmit(event){
+    props.handleFormSubmit(event,props.modalType);
+    setSubmitted(true);
+    setLoader(true);
+
+    setTimeout(() => {
+        setLoader(false);
+    }, 3000);
+  }
   return (
     <div className="w-full h-screen bg-gradient-to-tr">
       <div
@@ -48,7 +63,7 @@ export default function GraphFieldTextModal(props) {
               <h1 className="text-green-600 text-4xl font-[Montserrat] mb-4 text-center">
                 {props.modalTitle}
               </h1>
-              <form onSubmit={(e) => props.handleFormSubmit(e)}>
+              {!isSubmitted && <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="flex mt-5 p-5 flex-col space-y-1">
                   <label htmlFor="email" className="text-sm font-semibold text-gray-500">{props.textField}</label>
                   <input
@@ -74,8 +89,38 @@ export default function GraphFieldTextModal(props) {
                       Close
                     </button>
                 </div>
-              </form>
+              </form>}
+              {loader && <div className='w-full flex justify-center'> <HashLoaderComponent isLoading={loader} /> </div>}
+
+              {(!loader && isSubmitted && props.modalType == 'Email') && <div className='w-full flex flex-col items-center'>
+                  <Image src={Check} alt='Done' width={100} />
+                  <h2 className='text-3xl font-bold'>Email Sent Successfully !</h2>
+                  <p>Please Check your Email Inbox.</p>
+                  <button
+                    type='button'
+                      onClick={closeAuthModal}
+                      className="px-4 py-2 mt-2 text-lg mx-1 transition-colors duration-300 bg-white border text-green-600 rounded-md shadow hover:bg-green-600 hover:text-white focus:outline-none focus:ring-blue-200 focus:ring-4"
+                    >
+                      Close
+                    </button>
+                </div>}
+
+                {(!loader && isSubmitted && props.modalType == 'Phone') && <div className='w-full flex flex-col items-center'>
+                  <Image src={Check} alt='Done' width={100} />
+                  <h2 className='text-3xl font-bold'>SMS Sent Successfully !</h2>
+                  <p>Please Check your SMS Inbox.</p>
+                  <button
+                    type='button'
+                      onClick={closeAuthModal}
+                      className="px-4 py-2 mt-2 text-lg mx-1 transition-colors duration-300 bg-white border text-green-600 rounded-md shadow hover:bg-green-600 hover:text-white focus:outline-none focus:ring-blue-200 focus:ring-4"
+                    >
+                      Close
+                    </button>
+                </div>}
             </div>
+            {/* {loader && <div id="third" className="relative scale-y-0 opacity-0">
+                <HashLoaderComponent isLoading={loader} />
+            </div>} */}
           </div>
         </div>
       </div>
