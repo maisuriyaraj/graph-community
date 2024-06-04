@@ -96,7 +96,7 @@ export async function POST(request) {
             const newUser = new userModel(userBody);
             const result = await newUser.save();
 
-            const newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
+            const newToken = jwt.sign({ userId: result._id }, secreate_key, { expiresIn: '7d' });
 
             const authTableBody = {
                 user_id: result._id,
@@ -151,7 +151,7 @@ export async function PUT(request) {
                 return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
             } catch (err) {
                 // Token expired or invalid
-                let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
+                let newToken = jwt.sign({ userId: user?._id }, secreate_key, { expiresIn: '7d' });
 
                 const updateData = { access_token: newToken };
                 if (payload?.device_token) {

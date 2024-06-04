@@ -1,4 +1,5 @@
-export const EmailVerificationMail = `<!DOCTYPE html>
+export const EmailVerificationMail = (link) => {
+   return  `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,18 +54,19 @@ export const EmailVerificationMail = `<!DOCTYPE html>
             <h1>Email Verification</h1>
         </div>
         <div class="content">
-            <p>Dear [User],</p>
+            <p>Dear User,</p>
             <p>Thank you for registering with us. Please verify your email address by clicking the button below:</p>
-            <a href="[Verification_Link]" class="button">Verify Email</a>
+            <a href=${link} class="button">Verify Email</a>
             <p>If you did not create an account, no further action is required.</p>
             <p>Best regards,</p>
-            <p>[Your Company]</p>
+            <p>@GraphCommunity</p>
         </div>
         <div class="footer">
             <img src="https://i.ibb.co/WV1NjFT/logo-2.png" width=200 />
-            <p>&copy; [Year] [Your Company]. All rights reserved.</p>
+            <p>&copy; ©2024 Garph Community. All rights reserved.</p>
         </div>
     </div>
 </body>
 </html>
-`
+`;
+}

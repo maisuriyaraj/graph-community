@@ -6,6 +6,7 @@ import MainHeader from "./components/header";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import Head from "next/head";
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ["latin"] });
 

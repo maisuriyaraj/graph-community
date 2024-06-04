@@ -1,24 +1,24 @@
 "use client";
-import { getRequest, postRequest } from '@/lib/api.service';
+import { getRequest, postRequest, putRequest } from '@/lib/api.service';
 import Cookies from 'js-cookie';
 import { useEffect, useRef, useState } from 'react';
 import running from '../../../public/running.svg';
 import verification from '../../../public/verification.svg';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import GraphModal from '../components/modal';
 import GraphFieldTextModal from '../components/Fieldmodal';
 import Head from 'next/head';
 import { EmailVerificationMail } from '@/lib/mailService';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Dashboard() {
   const [loggedInUserId, setUserId] = useState(null);
   const [loggedUser, setUser] = useState(null);
   const [openModal, setModal] = useState(false);
   const [modalTitle, setModalTitle] = useState();
-  const [modalLoader,setModalLoader] = useState(false);
-  const [modalType,setModalType] = useState();
+  const [modalLoader, setModalLoader] = useState(false);
+  const [modalType, setModalType] = useState();
   const [textField, setTextField] = useState();
   const [fieldType, setFieldType] = useState();
   const [fieldValue, setFieldValue] = useState();
@@ -48,7 +48,7 @@ export default function Dashboard() {
   function openVerificationModal(modalName) {
     if (modalName == "Email") {
       setFieldType("email");
-      setModalType('Email')
+      setModalType('Email');
       setModalTitle("Email Verification");
       setTextField("Email Address");
       setModal(true);
@@ -65,24 +65,43 @@ export default function Dashboard() {
     setModal(false);
   }
 
-  const handleFormSubmit = (event,type) => {
+  const handleFormSubmit = (event, type) => {
 
     event.preventDefault();
     console.log("Submitted", event?.target[0].value);
     // setModal(false);
-    if(type == 'Email'){
-        console.log("Email Sent Successfully");
-        let mailBody = EmailVerificationMail;
-        const payload = {
-          email:event?.target[0].value,
-          mailBody:mailBody
-        }
-        postRequest('http://localhost:3000/api/mail',payload).then((res)=>{
-          console.log(res);
-        }).catch((error)=>{
+    if (type == 'Email') {
+      const userId = JSON.parse(Cookies.get('userId'));
+      const token = JSON.parse(Cookies.get('AuthToken'));
+      const AuthToken = token.split(' ')[1];
+
+      console.log("Email Sent Successfully");
+      let link = `http://localhost:3000/emailVerification/email/${userId}/${AuthToken}`
+      let mailBody = EmailVerificationMail(link);
+
+      const payload = { userId: userId, email: event?.target[0].value }
+      putRequest('http://localhost:3000/api/auth/verification', payload, { 'Authorization': AuthToken })
+        .then((res) => {
+          if(res.data.status){
+            console.log(res);
+            return true;
+          }else{
+            setModal(false);
+            toast.error(res.data.message);
+            return false;
+          }
+        }).then((res) => {
+          if(res){
+            const payload = {
+              email: event?.target[0].value,
+              mailBody: mailBody
+            }
+            return postRequest('http://localhost:3000/api/mail', payload, { 'Authorization': AuthToken })
+          }
+        }).catch((error) => {
           console.log(error);
-        })
-    }else{
+        });
+    } else {
       console.log("SMS Sent Successfully");
     }
     setModalLoader(true);
@@ -95,7 +114,9 @@ export default function Dashboard() {
         <title>Good Morning {loggedUser?.data?.userName}</title>
       </Head>
       <div className='flex gap-2'>
-        <div className='w-1/2 activation-card flex justify-between items-center h-auto shadow border p-6'>
+      <ToastContainer />
+
+       {!loggedUser?.isEmailVerified &&  <div className='w-1/2 activation-card flex justify-between items-center h-auto shadow border p-6'>
           <div className='text-white'>
             <h2 className='text-white title-card'>Email Verification</h2>
             <p>Please Complete Your Email Verification.</p>
@@ -104,8 +125,8 @@ export default function Dashboard() {
           <div className='pt-2'>
             <Image src={running} alt='running' width={180} />
           </div>
-        </div>
-        <div className='w-1/2 activation-card2 flex justify-between items-center h-auto shadow border p-6'>
+        </div>}
+        {!loggedUser?.isMobileVerified && <div className='w-1/2 activation-card2 flex justify-between items-center h-auto shadow border p-6'>
           <div className='text-black'>
             <h2 className='text-green-600 title-card'>Phone Verification</h2>
             <p>Please Complete Your Mobile Number Verification.</p>
@@ -114,7 +135,7 @@ export default function Dashboard() {
           <div className='pt-2'>
             <Image src={verification} alt='running' width={180} />
           </div>
-        </div>
+        </div>}
       </div>
       {/* {openModal && <div>
           <GraphModal  closeModal={closeModal} />
