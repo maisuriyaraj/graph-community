@@ -2,6 +2,8 @@
 import Image from "next/image";
 import Header from "./components/header";
 import img from '../../public/home-back.jpg';
+import { motion, useScroll } from "framer-motion";
+
 import img2 from '../../public/group.jpg';
 import img3 from '../../public/community.jpg'
 import greenCircle from '../../public/green-circle-icon.svg';
@@ -14,11 +16,18 @@ import Footer from "./components/footer";
 
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+
   useEffect(() => {
     Aos.init();
   }, []);
   return (
+    
     <main className="min-h-screen">
+      <motion.div
+        className="progress-bar"
+        style={{ scaleX: scrollYProgress }}
+      />
       <Header />
       <section className={"w-full relative"} id="hero_section" style={{ backgroundImage: `url(${img.src})`, }}>
         <div className="w-full hero-title-div px-16 absolute top-0">

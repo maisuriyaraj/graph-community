@@ -43,7 +43,7 @@ export default function MainHeader() {
     setOpenTheme(false);
   }
   return (
-    <div className='w-full bg-white border border-solid  fixed top-0 py-4 px-12' id="headerMain">
+    <div className='w-full z-[1111] bg-white border border-solid  fixed top-0 py-4 px-12' id="headerMain">
       <nav className="w-full flex items-center px-4">
         <div className="w-1/6 cursor-pointer text-start space-x-3 lg:pr-16 pr-6">
           <h2 className="font-normal logo text-2xl leading-6" id='logo' onClick={() => {goToHome('/dashboard')}}>

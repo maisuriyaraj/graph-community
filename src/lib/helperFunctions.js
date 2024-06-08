@@ -1,5 +1,7 @@
 import Cookies from "js-cookie";
 import nodemailer from 'nodemailer';
+import twilio from 'twilio';
+
 export function logOutUser(){
     localStorage.clear();
     Cookies.remove('AuthToken');
@@ -45,4 +47,20 @@ export function sendEmailService(email,mailBody){
             // res.send({ status: true, message: "Email sent Successfully", url: nodemailer.getTestMessageUrl(info) });
         });
     });
+}
+
+export function sendSMSService(mobile,smsBody){
+    let accountSid = process.env.TWILIOSID ;
+    let authToken =process.env.TWILIOCLIENT;
+    const twilioClient = new twilio(accountSid,authToken);
+
+    twilioClient.messages.create({
+        to: mobile,
+        messagingServiceSid:"MGcaf703405c93b25d9dddf43571e1960",
+        body: smsBody,
+    }).then((response)=>{
+        return true;
+    }).catch((error)=>{
+        console.log("<><><><><<><>><>",error);
+    })
 }

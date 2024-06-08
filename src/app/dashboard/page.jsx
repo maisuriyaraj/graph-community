@@ -5,12 +5,25 @@ import { useEffect, useRef, useState } from 'react';
 import running from '../../../public/running.svg';
 import verification from '../../../public/verification.svg';
 import Image from 'next/image';
+import TimeAgo from 'react-timeago'
 import Link from 'next/link';
+import moment from 'moment';
 import GraphModal from '../components/modal';
 import GraphFieldTextModal from '../components/Fieldmodal';
 import Head from 'next/head';
 import { EmailVerificationMail } from '@/lib/mailService';
 import { ToastContainer, toast } from 'react-toastify';
+import englishStrings from 'react-timeago/lib/language-strings/en';
+import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
+import verifiedImage from '../../../public/approved.png';
+import grayBack from '../../../public/gray-back.jpg';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css';
+import * as  Aos from 'aos';
+import "aos/dist/aos.css";
+import { HashLoaderComponent } from '../components/loader';
+
+
 
 export default function Dashboard() {
   const [loggedInUserId, setUserId] = useState(null);
@@ -22,6 +35,13 @@ export default function Dashboard() {
   const [textField, setTextField] = useState();
   const [fieldType, setFieldType] = useState();
   const [fieldValue, setFieldValue] = useState();
+  const [jobList, setjobList] = useState([]);
+  const [jobPortalList, setJobPortals] = useState([]);
+  const [communities,setCommunityList] = useState([]);
+  const [loader,setLoader] = useState(true);
+
+  const formatter = buildFormatter(englishStrings)
+
   /*
     Ref for Initial Mount: The isInitialMount ref is used to ensure that the effect runs only once during the initial mount.
   */
@@ -32,15 +52,37 @@ export default function Dashboard() {
       isInitialMount.current = false;
       getUserData();
     }
+    Aos.init();
   }, []);
 
   function getUserData() {
+    setLoader(true);
     const userData = JSON.parse(Cookies.get('userId'));
     const BearerToken = JSON.parse(Cookies.get('AuthToken'));
     const AuthToken = BearerToken.split(' ')[1];
     getRequest(`http://localhost:3000/api/user/${userData}`, { 'Authorization': AuthToken }).then((response) => {
-      setUser(response.data.data);
+      if (response.data.status) {
+        setUser(response.data.data);
+      }
+      return true;
+    }).then(async () => {
+      let response = await getRequest(`http://localhost:3000/api/jobs`);
+      if (response.data.status) {
+        setjobList(response.data.data);
+      }
+    }).then(async () => {
+      let response = await getRequest(`http://localhost:3000/api/jobPortals`);
+      if (response.data.status) {
+        setJobPortals(response.data.data);
+      }
+    }).then(async()=>{
+      let res = await getRequest("http://localhost:3000/api/community");
+      if(res.data.status){
+        setCommunityList(res.data.data);
+      }
+      setLoader(false);
     }).catch((error) => {
+      setLoader(false);
       console.log(error);
     })
   }
@@ -52,12 +94,14 @@ export default function Dashboard() {
       setModalTitle("Email Verification");
       setTextField("Email Address");
       setModal(true);
+      setFieldValue(loggedUser.email || null);
     } else {
       setFieldType("text");
       setModalType('Phone');
       setModalTitle("Mobile Verification");
       setTextField("Mobile Number");
       setModal(true);
+      setFieldValue(loggedUser.phone_number || null);
     }
   }
 
@@ -82,16 +126,16 @@ export default function Dashboard() {
       const payload = { userId: userId, email: event?.target[0].value }
       putRequest('http://localhost:3000/api/auth/verification', payload, { 'Authorization': AuthToken })
         .then((res) => {
-          if(res.data.status){
+          if (res.data.status) {
             console.log(res);
             return true;
-          }else{
+          } else {
             setModal(false);
             toast.error(res.data.message);
             return false;
           }
         }).then((res) => {
-          if(res){
+          if (res) {
             const payload = {
               email: event?.target[0].value,
               mailBody: mailBody
@@ -110,38 +154,207 @@ export default function Dashboard() {
 
   return (
     <main className='h-[100vh] w-full px-5' id='dashboard'>
-      <Head>
+      {/* <Head>
         <title>Good Morning {loggedUser?.data?.userName}</title>
-      </Head>
-      <div className='flex gap-2'>
-      <ToastContainer />
+      </Head> */}
+      {loader && <div className='w-full flex justify-center'> <HashLoaderComponent isLoading={loader} /> </div>}
+      {!loader && <div>
+        <div className='flex gap-1'>
+          <ToastContainer />
 
-       {!loggedUser?.isEmailVerified &&  <div className='w-1/2 activation-card flex justify-between items-center h-auto shadow border p-6'>
-          <div className='text-white'>
-            <h2 className='text-white title-card'>Email Verification</h2>
-            <p>Please Complete Your Email Verification.</p>
-            <a type='button' onClick={() => openVerificationModal("Email")} className='text-white cursor-pointer mt-3 underline font-bold'>Verify Now</a>
+          {!loggedUser?.isEmailVerified && <div className='w-1/2 activation-card flex justify-between items-center h-auto shadow border p-6'>
+            <div className='text-white'>
+              <h2 className='text-white title-card'>Email Verification</h2>
+              <p>Please Complete Your Email Verification.</p>
+              <a type='button' onClick={() => openVerificationModal("Email")} className='text-white cursor-pointer mt-3 underline font-bold'>Verify Now</a>
+            </div>
+            <div className='pt-2'>
+              <Image src={running} alt='running' width={180} />
+            </div>
+          </div>}
+          {!loggedUser?.isMobileVerified && <div className='w-1/2 activation-card2 flex justify-between items-center h-auto shadow border p-6'>
+            <div className='text-black'>
+              <h2 className='text-green-600 title-card'>Phone Verification</h2>
+              <p>Please Complete Your Mobile Number Verification.</p>
+              <a type='button' onClick={() => openVerificationModal("Phone")} className='text-black cursor-pointer mt-3 underline font-bold'>Verify Now</a>
+            </div>
+            <div className='pt-2'>
+              <Image src={verification} alt='running' width={180} />
+            </div>
+          </div>}
+        </div>
+
+        <div className='mt-10 z-0'>
+          <div className='section-header'>
+            <h1>Latest Jobs</h1>
           </div>
-          <div className='pt-2'>
-            <Image src={running} alt='running' width={180} />
+
+          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+            {jobList.map((x) => (
+              <div data-aos="fade-up" className="w-[400px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative py-4 px-4 flex-shrink-0" key={x._id}>
+                <div className='absolute right-2 top-2'>
+                  <Image src={verifiedImage} alt='verified' width={40} />
+                </div>
+                <h3 className='text-2xl'>{x.job_title || <Skeleton count={1} />}</h3>
+                <p>{x.company || <Skeleton count={1} />}</p>
+                <p className="text-gray-400 mt-3 text-sm h-16 overflow-hidden line-clamp-3">
+                  {x.job_description || <Skeleton count={3} />}</p>
+                <div className='flex justify-between items-center mt-5'>
+                  <button type='button' className='px-6 rounded-2xl text-sm py-3 bg-[#2aa557] hover:bg-[#267141] text-white font-bold'>View Job</button>
+                  <span className='text-sm text-gray-400'>{<TimeAgo date={moment(x.created_date).format('MMM DD , YYYY')} formatter={formatter} /> || <Skeleton count={1} />}</span>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>}
-        {!loggedUser?.isMobileVerified && <div className='w-1/2 activation-card2 flex justify-between items-center h-auto shadow border p-6'>
-          <div className='text-black'>
-            <h2 className='text-green-600 title-card'>Phone Verification</h2>
-            <p>Please Complete Your Mobile Number Verification.</p>
-            <a type='button' onClick={() => openVerificationModal("Phone")} className='text-black cursor-pointer mt-3 underline font-bold'>Verify Now</a>
+        </div>
+
+        <div className='mt-10'>
+          <div className='section-header'>
+            <h1>High Profile Job Portals</h1>
           </div>
-          <div className='pt-2'>
-            <Image src={verification} alt='running' width={180} />
+
+          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+            {jobPortalList.map((x) => (
+              <div data-aos="fade-up" className="w-[350px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative flex-shrink-0" key={x._id}>
+                <div className=" bg-white shadow-xl rounded-lg text-gray-900">
+                  <div className="rounded-t-lg h-32 overflow-hidden">
+                    <Image
+                      className="object-cover object-top w-full"
+                      src={grayBack}
+                      alt="Mountain"
+                    />
+                  </div>
+                  <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
+                    <img
+                      className=" bg-white object-center h-32"
+                      src={x.logo_url}
+                      alt="Woman looking front"
+                    />
+                  </div>
+                  <div className="text-center mt-2">
+                    <h2 className="font-semibold">{x.name}</h2>
+                    {/* <p className="text-gray-500">Freelance Web Designer</p> */}
+                  </div>
+                  {/* <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around">
+                  <li className="flex flex-col items-center justify-around">
+                    <svg
+                      className="w-4 fill-current text-blue-900"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                    <div>2k</div>
+                  </li>
+                  <li className="flex flex-col items-center justify-between">
+                    <svg
+                      className="w-4 fill-current text-blue-900"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z" />
+                    </svg>
+                    <div>10k</div>
+                  </li>
+                  <li className="flex flex-col items-center justify-around">
+                    <svg
+                      className="w-4 fill-current text-blue-900"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9 12H1v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6h-8v2H9v-2zm0-1H0V5c0-1.1.9-2 2-2h4V2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v6h-9V9H9v2zm3-8V2H8v1h4z" />
+                    </svg>
+                    <div>15</div>
+                  </li>
+                </ul> */}
+                  <div className="p-4 border-t mx-8 mt-2">
+                    <button className="w-1/2 block mx-auto text-sm transition-all rounded-2xl bg-green-600 hover:bg-white hover:text-green-600 border hover:border-green-600  font-semibold text-white px-3 py-4">
+                      Open Portal
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            ))}
           </div>
-        </div>}
-      </div>
+        </div>
+
+        <div className='mt-10'>
+          <div className='section-header'>
+            <h1>Populer Public Communities</h1>
+          </div>
+
+          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+            {communities.map((x) => (
+              <div data-aos="fade-up" className="w-[350px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative flex-shrink-0" key={x._id}>
+              <div className=" bg-white shadow-xl rounded-lg text-gray-900">
+                <div className="rounded-t-lg h-32 overflow-hidden">
+                  <img
+                    className="object-cover object-top w-full"
+                    src={x.background_picture}
+                    alt="Mountain"
+                  />
+                </div>
+                <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
+                  <img
+                    className=" bg-white object-center h-32"
+                    src={x.profile_picture}
+                    alt="Woman looking front"
+                  />
+                </div>
+                <div className="text-center mt-2">
+                  <h2 className="font-semibold">{x.community_name}</h2>
+                  <p className="text-gray-500">{x.total_users} Members</p>
+                </div>
+                {/* <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around">
+                <li className="flex flex-col items-center justify-around">
+                  <svg
+                    className="w-4 fill-current text-blue-900"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                  <div>2k</div>
+                </li>
+                <li className="flex flex-col items-center justify-between">
+                  <svg
+                    className="w-4 fill-current text-blue-900"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z" />
+                  </svg>
+                  <div>10k</div>
+                </li>
+                <li className="flex flex-col items-center justify-around">
+                  <svg
+                    className="w-4 fill-current text-blue-900"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9 12H1v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6h-8v2H9v-2zm0-1H0V5c0-1.1.9-2 2-2h4V2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v6h-9V9H9v2zm3-8V2H8v1h4z" />
+                  </svg>
+                  <div>15</div>
+                </li>
+              </ul> */}
+                <div className="p-4 border-t mx-8 mt-2">
+                  <button className="w-1/2 block mx-auto text-sm transition-all rounded-2xl bg-green-600 hover:bg-white hover:text-green-600 border hover:border-green-600  font-semibold text-white px-3 py-4">
+                    Join
+                  </button>
+                </div>
+              </div>
+
+            </div>
+            ))}
+          </div>
+        </div>
+      </div>}
       {/* {openModal && <div>
           <GraphModal  closeModal={closeModal} />
       </div>} */}
       {openModal && <div>
-        <GraphFieldTextModal closeModal={closeModal} loader={modalLoader} modalTitle={modalTitle} textField={textField} fieldType={fieldType} modalType={modalType} handleFormSubmit={handleFormSubmit} />
+        <GraphFieldTextModal closeModal={closeModal} fieldValue={fieldValue} loader={modalLoader} modalTitle={modalTitle} textField={textField} fieldType={fieldType} modalType={modalType} handleFormSubmit={handleFormSubmit} />
       </div>}
     </main>
   )

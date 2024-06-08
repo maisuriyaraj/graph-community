@@ -9,6 +9,7 @@ export default function GraphFieldTextModal(props) {
   const [authAnimation, setAnimation] = useState();
   const [loader,setLoader] = useState(false);
   const [isSubmitted,setSubmitted] = useState(false);
+  const [txtValue,setValue] = useState(props.fieldValue);
 
   useEffect(() => {
     openAuthModal();
@@ -69,8 +70,10 @@ export default function GraphFieldTextModal(props) {
                   <input
                     type={props.fieldType}
                     id={props.textField}
+                    value={txtValue}
                     required
                     name={props.textField}
+                    onChange={(e)=>setValue(e.target.value)}
                     className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200"
                   />
                 </div>

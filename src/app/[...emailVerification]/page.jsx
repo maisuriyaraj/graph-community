@@ -10,10 +10,12 @@
 
 "use client";
 import { postRequest } from "@/lib/api.service";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function EmailVerification({params}) {
     // VerifyUser(params.emailVerification[2],params.emailVerification[3],params.emailVerification[1]);
+    const route = useRouter();
     useEffect(()=>{
       const payload = {
         verification:params.emailVerification[1],
@@ -21,8 +23,10 @@ export default function EmailVerification({params}) {
       }
   
       let token = params.emailVerification[3]
-      postRequest("http://localhost:3000/api/auth/verification",payload,{'Authorization':token}).then(()=>{
-  
+      postRequest("http://localhost:3000/api/auth/verification",payload,{'Authorization':token}).then((response)=>{
+        if(response.data.status){
+          route.push('/');
+        }
       }).catch((error)=>{
         console.log(error)
       })

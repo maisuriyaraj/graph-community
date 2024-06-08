@@ -383,3 +383,14 @@ a {
     display: none; /* for Chrome, Safari, and Opera */
   }
   
+
+  .progress-bar {
+    position: fixed;
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: #16a34a;
+    transform-origin: 0%;
+  }

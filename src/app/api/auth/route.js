@@ -22,6 +22,8 @@ export async function POST(request) {
                 { userName: payload.userName }
             ]
         }).select({ email: 1, password: 1, userName: 1 });
+        console.log(payload);
+        console.log(user)
         if (user && payload.googleAccount) {
             // If User try to sign up with registered Google Account (It will directly loggedIn user)
             let tokenData = await AuthTableModel.findOne({ user_id: user._id });
