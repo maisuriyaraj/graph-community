@@ -35,7 +35,7 @@ export default function SignIn() {
     const provider = new GoogleAuthProvider();
     try {
       const data = await signInWithPopup(auth, provider);
-      const response = await putRequest("http://localhost:3000/api/auth", {
+      const response = await postRequest("http://localhost:3000/api/auth", {
         email: data.user.email,
         userName: data.user.displayName,
         googleAccount: true
@@ -64,7 +64,7 @@ export default function SignIn() {
     try {
       const data = await signInWithPopup(auth, provider);
       console.log(data)
-      const response = await putRequest("http://localhost:3000/api/auth", {
+      const response = await postRequest("http://localhost:3000/api/auth", {
         email: data.user.email,
         userName: data.user.displayName,
         githubAccount: true

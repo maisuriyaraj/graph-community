@@ -33,7 +33,7 @@ export function sendEmailService(email,mailBody){
         let message = {
             from: `Graph Community <graphcommunity@gmail.com>`,
             to: `Recipient <${email}>`,
-            subject: 'Please upload your Documents',
+            subject: 'Email Verification ',
             // html: "<h1>Welcome to Graph Community</h1>" || mailBody
             html: mailBody
         };

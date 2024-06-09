@@ -127,6 +127,7 @@ export async function PUT(request) {
         // if (!payload.email) {
         //     return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
         // }
+        console.log(payload)
 
         const user = await userModel.findOne({
             $or: [
@@ -135,34 +136,36 @@ export async function PUT(request) {
             ]
         }).select({ email: 1, password: 1, userName: 1 });
         if (user) {
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user)
             // User Log In
             if (payload.password) {
                 let isRight = await bcrypt.compare(payload.password, user?.password);
                 console.log(isRight)
-                if (!isRight) {
-                    return NextResponse.json({ status: false, message: "Password is not correct !", code: 501 })
+                if (payload.email == user.email  && isRight) {
+                    let tokenData = await AuthTableModel.findOne({ user_id: user._id });
+                    let token = tokenData?.access_token;
+        
+                    try {
+                        let  user = jwt.verify(token, secreate_key);
+                        console.log("TOKEN VERIFIED");
+                        console.log("this is User",user);
+                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
+                    } catch (err) {
+                        // Token expired or invalid
+                        let newToken = jwt.sign({ userId: user?._id }, secreate_key, { expiresIn: '7d' });
+        
+                        const updateData = { access_token: newToken };
+                        if (payload?.device_token) {
+                            updateData.device_token = payload.device_token;
+                        }
+        
+                        await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
+                        console.log("TOKEN EXPIRED AND NEW GENERATED !!")
+                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
+                    }
+                }else{
+                    return NextResponse.json({ status: false, message: "Email or Password is not correct !", code: 501 })
                 }
-            }
-            let tokenData = await AuthTableModel.findOne({ user_id: user._id });
-            let token = tokenData?.access_token;
-
-            try {
-                let  user = jwt.verify(token, secreate_key);
-                console.log("TOKEN VERIFIED");
-                console.log("this is User",user);
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
-            } catch (err) {
-                // Token expired or invalid
-                let newToken = jwt.sign({ userId: user?._id }, secreate_key, { expiresIn: '7d' });
-
-                const updateData = { access_token: newToken };
-                if (payload?.device_token) {
-                    updateData.device_token = payload.device_token;
-                }
-
-                await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
-                console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
             }
         } else {
             return NextResponse.json({ status: false, message: "User Does Not Exists !!" });
