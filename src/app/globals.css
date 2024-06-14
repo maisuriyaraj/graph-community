@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -393,4 +392,8 @@ a {
     height: 5px;
     background: #16a34a;
     transform-origin: 0%;
+  }
+
+  .rbc-calendar {
+    height: 90vh !important;
   }

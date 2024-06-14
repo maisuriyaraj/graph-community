@@ -4,6 +4,7 @@ import '../../global.css';
 import avatar from '../../../../../public/user.png'
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function MainHeader() {
   const [open, setOpen] = useState(false);
@@ -95,9 +96,12 @@ export default function MainHeader() {
           <input type="search" name="search" id="search" placeholder="Search here ..." className="w-[70%] px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-green-200  input-controls" />
         </div>
         <div className="w-1/2 flex items-center justify-end h-12">
-          <div className="mx-2 relative cursor-pointer">
-            <button className="bg-white rounded-lg transition-all w-full text-green-600 border border-solid border-green-600 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 inline-flex items-center">
+          <div className="mx-2 flex gap-2 relative cursor-pointer">
+            <button className="bg-white rounded-lg transition-all  text-green-600 border border-solid border-green-600 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 inline-flex items-center">
               <a className="" href="#"> <i className="bi bi-plus-circle"></i> New Community </a>
+            </button>
+            <button className="bg-white rounded-lg transition-all text-green-600 border border-solid border-green-600 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 inline-flex items-center">
+              <Link className="" href="/dashboard/schedule"> <i className="bi bi-calendar4-range"></i> My Schedule </Link>
             </button>
           </div>
           <div className="mx-2 relative cursor-pointer" title="Profile">

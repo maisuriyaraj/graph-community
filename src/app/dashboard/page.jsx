@@ -17,8 +17,6 @@ import englishStrings from 'react-timeago/lib/language-strings/en';
 import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
 import verifiedImage from '../../../public/approved.png';
 import grayBack from '../../../public/gray-back.jpg';
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css';
 import * as  Aos from 'aos';
 import "aos/dist/aos.css";
 import { HashLoaderComponent } from '../components/loader';
@@ -120,7 +118,7 @@ export default function Dashboard() {
       const AuthToken = token.split(' ')[1];
 
       console.log("Email Sent Successfully");
-      let link = `http://localhost:3000/emailVerification/email/${userId}/${AuthToken}`
+      let link = `http://localhost:3000/emailVerification?userId=${userId}&token=${AuthToken}`
       let mailBody = EmailVerificationMail(link);
 
       const payload = { userId: userId, email: event?.target[0].value }
@@ -195,13 +193,13 @@ export default function Dashboard() {
                 <div className='absolute right-2 top-2'>
                   <Image src={verifiedImage} alt='verified' width={40} />
                 </div>
-                <h3 className='text-2xl'>{x.job_title || <Skeleton count={1} />}</h3>
-                <p>{x.company || <Skeleton count={1} />}</p>
+                <h3 className='text-2xl'>{x.job_title}</h3>
+                <p>{x.company}</p>
                 <p className="text-gray-400 mt-3 text-sm h-16 overflow-hidden line-clamp-3">
-                  {x.job_description || <Skeleton count={3} />}</p>
+                  {x.job_description}</p>
                 <div className='flex justify-between items-center mt-5'>
                   <button type='button' className='px-6 rounded-2xl text-sm py-3 bg-[#2aa557] hover:bg-[#267141] text-white font-bold'>View Job</button>
-                  <span className='text-sm text-gray-400'>{<TimeAgo date={moment(x.created_date).format('MMM DD , YYYY')} formatter={formatter} /> || <Skeleton count={1} />}</span>
+                  <span className='text-sm text-gray-400'>{<TimeAgo date={moment(x.created_date).format('MMM DD , YYYY')} formatter={formatter} />}</span>
                 </div>
               </div>
             ))}
