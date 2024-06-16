@@ -20,6 +20,9 @@ import grayBack from '../../../public/gray-back.jpg';
 import * as  Aos from 'aos';
 import "aos/dist/aos.css";
 import { HashLoaderComponent } from '../components/loader';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 
 
@@ -35,10 +38,19 @@ export default function Dashboard() {
   const [fieldValue, setFieldValue] = useState();
   const [jobList, setjobList] = useState([]);
   const [jobPortalList, setJobPortals] = useState([]);
-  const [communities,setCommunityList] = useState([]);
-  const [loader,setLoader] = useState(true);
+  const [communities, setCommunityList] = useState([]);
+  const [loader, setLoader] = useState(true);
 
-  const formatter = buildFormatter(englishStrings)
+  const formatter = buildFormatter(englishStrings);
+  var settings = {
+    autoplay:true,
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    arrows: true
+  };
 
   /*
     Ref for Initial Mount: The isInitialMount ref is used to ensure that the effect runs only once during the initial mount.
@@ -73,9 +85,9 @@ export default function Dashboard() {
       if (response.data.status) {
         setJobPortals(response.data.data);
       }
-    }).then(async()=>{
+    }).then(async () => {
       let res = await getRequest("http://localhost:3000/api/community");
-      if(res.data.status){
+      if (res.data.status) {
         setCommunityList(res.data.data);
       }
       setLoader(false);
@@ -150,6 +162,7 @@ export default function Dashboard() {
     setFieldValue(event?.target[0].value);
   }
 
+
   return (
     <main className='h-[100vh] w-full px-5' id='dashboard'>
       {/* <Head>
@@ -182,12 +195,11 @@ export default function Dashboard() {
           </div>}
         </div>
 
-        <div className='mt-10 z-0'>
+        <div className='mt-10 relative'>
           <div className='section-header'>
             <h1>Latest Jobs</h1>
           </div>
-
-          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+          <Slider {...settings}>
             {jobList.map((x) => (
               <div data-aos="fade-up" className="w-[400px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative py-4 px-4 flex-shrink-0" key={x._id}>
                 <div className='absolute right-2 top-2'>
@@ -203,7 +215,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-          </div>
+          </Slider>
         </div>
 
         <div className='mt-10'>
@@ -285,26 +297,26 @@ export default function Dashboard() {
           <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
             {communities.map((x) => (
               <div data-aos="fade-up" className="w-[350px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative flex-shrink-0" key={x._id}>
-              <div className=" bg-white shadow-xl rounded-lg text-gray-900">
-                <div className="rounded-t-lg h-32 overflow-hidden">
-                  <img
-                    className="object-cover object-top w-full"
-                    src={x.background_picture}
-                    alt="Mountain"
-                  />
-                </div>
-                <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                  <img
-                    className=" bg-white object-center h-32"
-                    src={x.profile_picture}
-                    alt="Woman looking front"
-                  />
-                </div>
-                <div className="text-center mt-2">
-                  <h2 className="font-semibold">{x.community_name}</h2>
-                  <p className="text-gray-500">{x.total_users} Members</p>
-                </div>
-                {/* <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around">
+                <div className=" bg-white shadow-xl rounded-lg text-gray-900">
+                  <div className="rounded-t-lg h-32 overflow-hidden">
+                    <img
+                      className="object-cover object-top w-full"
+                      src={x.background_picture}
+                      alt="Mountain"
+                    />
+                  </div>
+                  <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
+                    <img
+                      className=" bg-white object-center h-32"
+                      src={x.profile_picture}
+                      alt="Woman looking front"
+                    />
+                  </div>
+                  <div className="text-center mt-2">
+                    <h2 className="font-semibold">{x.community_name}</h2>
+                    <p className="text-gray-500">{x.total_users} Members</p>
+                  </div>
+                  {/* <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around">
                 <li className="flex flex-col items-center justify-around">
                   <svg
                     className="w-4 fill-current text-blue-900"
@@ -336,14 +348,14 @@ export default function Dashboard() {
                   <div>15</div>
                 </li>
               </ul> */}
-                <div className="p-4 border-t mx-8 mt-2">
-                  <button className="w-1/2 block mx-auto text-sm transition-all rounded-2xl bg-green-600 hover:bg-white hover:text-green-600 border hover:border-green-600  font-semibold text-white px-3 py-4">
-                    Join
-                  </button>
+                  <div className="p-4 border-t mx-8 mt-2">
+                    <button className="w-1/2 block mx-auto text-sm transition-all rounded-2xl bg-green-600 hover:bg-white hover:text-green-600 border hover:border-green-600  font-semibold text-white px-3 py-4">
+                      Join
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-            </div>
+              </div>
             ))}
           </div>
         </div>

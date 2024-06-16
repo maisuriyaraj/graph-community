@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { AuthTableModel, userModel } from "@/lib/models";
 import { NextApiRequest } from 'next';
+import { generateUniqueUsername } from "@/lib/helperFunctions";
 
 // const secreate_key = "akfnkdfkdjf-+-+--+-+skdfbs d sxcdvhjkdfghjkdfghjkdfghjklfghjkl852852741063!@#$%!@#$%^@#$%^@#$%^&%^&*(^&*()*()&*)";
 const secreate_key = process.env.SECREATE_KEY
@@ -14,25 +15,29 @@ export async function POST(request) {
 
         // if (!payload.email) {
         //     return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
+
         // }
 
-        const user = await userModel.findOne({
-            $or: [
-                { email: payload.email },
-                { userName: payload.userName }
-            ]
-        }).select({ email: 1, password: 1, userName: 1 });
-        console.log(payload);
-        console.log(user)
+        let user = null;
+        if (payload?.userName) {
+            user = await userModel.findOne({
+                $or: [
+                    { email: payload?.email },
+                    { userName: payload?.userName }
+                ]
+            }).select({ email: 1, password: 1, userName: 1 });
+        }else{
+            user = await userModel.findOne({email:payload?.email}).select({ email: 1, password: 1, userName: 1 });
+        }
         if (user && payload.googleAccount) {
             // If User try to sign up with registered Google Account (It will directly loggedIn user)
             let tokenData = await AuthTableModel.findOne({ user_id: user._id });
             let token = tokenData?.access_token;
 
             try {
-                let  user = jwt.verify(token, secreate_key);
+                let user = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:user.userId });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId: user.userId });
             } catch (err) {
                 // Token expired or invalid
                 let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
@@ -44,7 +49,7 @@ export async function POST(request) {
 
                 await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken ,userId:user._id});
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken, userId: user._id });
             }
         }
         else if (user && payload.githubAccount) {
@@ -53,9 +58,9 @@ export async function POST(request) {
             let token = tokenData?.access_token;
 
             try {
-                let  auth = jwt.verify(token, secreate_key);
+                let auth = jwt.verify(token, secreate_key);
                 console.log("TOKEN VERIFIED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId:auths.userId });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId: auths.userId });
             } catch (err) {
                 // Token expired or invalid
                 let newToken = jwt.sign({ userId: user._id }, secreate_key, { expiresIn: '7d' });
@@ -67,10 +72,10 @@ export async function POST(request) {
 
                 await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                 console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
+                return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken, userId: user._id });
             }
         }
-        else if (user) {
+        else if (user && user.email == payload.email) {
             // It user Enteres Registered Email
             return NextResponse.json({ status: false, message: 'User has already registered !' });
         }
@@ -83,7 +88,12 @@ export async function POST(request) {
                 userBody.password = await bcrypt.hash(payload.password, salt);
             }
             if (payload?.userName) {
+                
                 userBody.userName = payload.userName;
+            }
+            if(!payload?.userName){
+                let aiuserName = generateUniqueUsername();
+                userBody.userName =  aiuserName;
             }
             if (payload?.googleAccount) {
                 userBody.googleAccount = payload.googleAccount;
@@ -110,7 +120,7 @@ export async function POST(request) {
             const newAuthRecord = new AuthTableModel(authTableBody);
             await newAuthRecord.save();
 
-            return NextResponse.json({ status: true, message: "User Registered Successfully!", token: newToken ,userId:result._id});
+            return NextResponse.json({ status: true, message: "User Registered Successfully!", token: newToken, userId: result._id });
         }
     } catch (error) {
         console.error(error);
@@ -127,7 +137,6 @@ export async function PUT(request) {
         // if (!payload.email) {
         //     return NextResponse.json({ status: false, message: "Please Provide Email Address !!" });
         // }
-        console.log(payload)
 
         const user = await userModel.findOne({
             $or: [
@@ -136,34 +145,33 @@ export async function PUT(request) {
             ]
         }).select({ email: 1, password: 1, userName: 1 });
         if (user) {
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user)
             // User Log In
             if (payload.password) {
                 let isRight = await bcrypt.compare(payload.password, user?.password);
                 console.log(isRight)
-                if (payload.email == user.email  && isRight) {
+                if (payload.email == user.email && isRight) {
                     let tokenData = await AuthTableModel.findOne({ user_id: user._id });
                     let token = tokenData?.access_token;
-        
+
                     try {
-                        let  user = jwt.verify(token, secreate_key);
+                        let user = jwt.verify(token, secreate_key);
                         console.log("TOKEN VERIFIED");
-                        console.log("this is User",user);
-                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId :user.userId});
+                        console.log("this is User", user);
+                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token, userId: user.userId });
                     } catch (err) {
                         // Token expired or invalid
                         let newToken = jwt.sign({ userId: user?._id }, secreate_key, { expiresIn: '7d' });
-        
+
                         const updateData = { access_token: newToken };
                         if (payload?.device_token) {
                             updateData.device_token = payload.device_token;
                         }
-        
+
                         await AuthTableModel.updateOne({ user_id: user._id }, { $set: updateData });
                         console.log("TOKEN EXPIRED AND NEW GENERATED !!")
-                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken,userId:user._id });
+                        return NextResponse.json({ status: true, message: 'User Logged In Successfully', token: newToken, userId: user._id });
                     }
-                }else{
+                } else {
                     return NextResponse.json({ status: false, message: "Email or Password is not correct !", code: 501 })
                 }
             }

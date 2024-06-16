@@ -64,3 +64,11 @@ export function sendSMSService(mobile,smsBody){
         console.log("<><><><><<><>><>",error);
     })
 }
+
+export function generateUniqueUsername(baseName = 'user') {
+    const baseLength = `${baseName}._`.length; // Length of 'user._'
+    const randomNumbersLength = 10 - baseLength; // Remaining length for random numbers
+    const randomNumbers = Math.floor(Math.random() * Math.pow(10, randomNumbersLength)).toString().padStart(randomNumbersLength, '0'); // Generate random numbers and pad with zeros if necessary
+    const uniqueUsername = `${baseName}._${randomNumbers}`;
+    return uniqueUsername;
+}

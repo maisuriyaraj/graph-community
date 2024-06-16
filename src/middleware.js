@@ -21,7 +21,7 @@ export function middleware(request) {
   }
 
   // If user is Unauthorized .it will redirect user to public lending page (Home Page)
-  if (!isUser && request.nextUrl.pathname === '/dashboard') {
+  if (!isUser && (request.nextUrl.pathname === '/dashboard' || request.nextUrl.pathname.startsWith('/dashboard'))) {
     // PROTECT PAGE FROM UNAUTHORIZED ACCESS
     return NextResponse.redirect(new URL("/", request.url));
   }
