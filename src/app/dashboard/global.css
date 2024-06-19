@@ -135,4 +135,10 @@ span {
     }
     
   }
+
+  .slick-track{
+    display: flex !important;
+    gap: 20px !important;
+    padding: 10px !important;
+  }
 }

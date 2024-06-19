@@ -27,7 +27,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 
 export default function Dashboard() {
-  const [loggedInUserId, setUserId] = useState(null);
   const [loggedUser, setUser] = useState(null);
   const [openModal, setModal] = useState(false);
   const [modalTitle, setModalTitle] = useState();
@@ -48,6 +47,16 @@ export default function Dashboard() {
     infinite: true,
     speed: 500,
     slidesToShow: 3,
+    slidesToScroll: 1,
+    arrows: true
+  };
+
+  var settings2 = {
+    autoplay:true,
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
     slidesToScroll: 1,
     arrows: true
   };
@@ -223,7 +232,7 @@ export default function Dashboard() {
             <h1>High Profile Job Portals</h1>
           </div>
 
-          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+          <Slider {...settings2}>
             {jobPortalList.map((x) => (
               <div data-aos="fade-up" className="w-[350px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative flex-shrink-0" key={x._id}>
                 <div className=" bg-white shadow-xl rounded-lg text-gray-900">
@@ -286,7 +295,7 @@ export default function Dashboard() {
 
               </div>
             ))}
-          </div>
+          </Slider>
         </div>
 
         <div className='mt-10'>
@@ -294,7 +303,7 @@ export default function Dashboard() {
             <h1>Populer Public Communities</h1>
           </div>
 
-          <div className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth mt-5">
+          <Slider {...settings2}>
             {communities.map((x) => (
               <div data-aos="fade-up" className="w-[350px] bg-white border cursor-pointer transition-all rounded-2xl hover:bg-gray-200 relative flex-shrink-0" key={x._id}>
                 <div className=" bg-white shadow-xl rounded-lg text-gray-900">
@@ -357,7 +366,7 @@ export default function Dashboard() {
 
               </div>
             ))}
-          </div>
+          </Slider>
         </div>
       </div>}
       {/* {openModal && <div>
