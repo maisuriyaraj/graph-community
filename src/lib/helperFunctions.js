@@ -1,12 +1,6 @@
-import Cookies from "js-cookie";
 import nodemailer from 'nodemailer';
 import twilio from 'twilio';
 
-export function logOutUser(){
-    localStorage.clear();
-    Cookies.remove('AuthToken');
-    window.location.reload();
-}
 
 export function sendEmailService(email,mailBody){
     nodemailer.createTestAccount((err, account) => {
