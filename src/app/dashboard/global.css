@@ -141,4 +141,11 @@ span {
     gap: 20px !important;
     padding: 10px !important;
   }
+
+  .greetings{
+    font-family: "Abril Fatface", serif;
+    letter-spacing: 3px;
+    color: #16a34a;
+
+  }
 }

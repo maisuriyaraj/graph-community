@@ -37,7 +37,7 @@ export default function GraphScheduleModal(props) {
   function closeAuthModal() {
     authAnimation.reverse().timeScale(-1.6);
     setTimeout(() => {
-      props.closeModal();
+      // props.closeModal();
       router.push('/dashboard')
     }, 900);
   }

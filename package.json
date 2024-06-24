@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.13.0",
     "aos": "^2.3.4",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",

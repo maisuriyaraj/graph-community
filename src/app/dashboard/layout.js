@@ -35,7 +35,7 @@ async function getUserData() {
 }
 
 export const metadata = {
-  title: `Good Morning`,
+  title: `Graph Community`,
   description: "",
 };
 
@@ -48,7 +48,13 @@ export default async function DashBoardLayout({ children }) {
         <Script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></Script>
         <Script src="https://accounts.google.com/gsi/client" async defer></Script>
       </Head>
-      <body className={inter.className}><SideNav userData={userData} /><MainHeader /><div className="ml-[16rem] mt-32">{children}</div></body>
+      <body className={inter.className}>
+        <SideNav userData={userData} />
+        <MainHeader />
+        <div className="ml-[16rem] mt-32 relative">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

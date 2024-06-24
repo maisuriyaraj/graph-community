@@ -171,14 +171,29 @@ export default function Dashboard() {
     setFieldValue(event?.target[0].value);
   }
 
+  const getGreeting = () => {
+    const currentHour = new Date().getHours();
+    let greeting;
+
+    if (currentHour < 12) {
+      greeting = "Good Morning";
+    } else if (currentHour < 18) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+
+    return greeting;
+  }
+
 
   return (
     <main className='h-[100vh] w-full px-5' id='dashboard'>
-      {/* <Head>
-        <title>Good Morning {loggedUser?.data?.userName}</title>
-      </Head> */}
       {loader && <div className='w-full flex justify-center'> <HashLoaderComponent isLoading={loader} /> </div>}
       {!loader && <div>
+        <div className='p-4'>
+          <h2 className='text-4xl greetings'>{getGreeting()} {loggedUser?.userName || "User"}</h2>
+        </div>
         <div className='flex gap-1'>
           <ToastContainer />
 
