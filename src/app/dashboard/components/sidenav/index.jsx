@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Cookies from "js-cookie";
 import avatar from '../../../../../public/user.png';
 import Image from 'next/image';
@@ -9,12 +9,18 @@ import Link from 'next/link';
 
 export default function SideNav({ userData }) {
 
+  const [path,setPath] = useState(window.location.pathname);
+
+  useEffect(()=>{
+
+  },[path]);
+
   function logOutUser(){
     localStorage.clear();
     Cookies.remove('AuthToken');
     Cookies.remove('userId');
     window.location.reload();
-}
+  }
 
 
   return (
@@ -34,23 +40,26 @@ export default function SideNav({ userData }) {
       </div>
       <div className="flex flex-col border-b">
         <ul className='pl-5'>
-          <li className='p-2 nav-link cursor-pointer activePath mt-1'>
-            <Link href="/dashboard">Dashboard</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard' ? 'activePath' : ''} mt-1`}>
+            <Link href="/dashboard" onClick={()=>setPath('/dashboard')}>Dashboard</Link>
           </li>
-          <li className='p-2 nav-link cursor-pointer hover:bg-gray-200  mt-1'>
-            <Link href="#">Questions</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/question' ? 'activePath' : ''} mt-1`}>
+            <Link href="#" onClick={()=>setPath('/dashboard/question')}>Questions</Link>
           </li>
-          <li className='p-2 nav-link cursor-pointer hover:bg-gray-200 mt-1'>
-            <Link href="#">For You</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/feed' ? 'activePath' : ''} mt-1`}>
+            <Link href="#" onClick={()=>setPath('/dashboard/feed')}>For You</Link>
           </li>
-          <li className='p-2 nav-link cursor-pointer hover:bg-gray-200 mt-1'>
-            <Link href="#">Articles</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/articals' ? 'activePath' : ''} mt-1`}>
+            <Link href="#" onClick={()=>setPath('/dashboard/articals')}>Articles</Link>
           </li>
-          <li className='p-2 nav-link cursor-pointer hover:bg-gray-200  mt-1'>
-            <Link href="#">Collections</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/collections' ? 'activePath' : ''} mt-1`}>
+            <Link href="#" onClick={()=>setPath('/dashboard/collections')}>Collections</Link>
           </li>
-          <li className='p-2 nav-link cursor-pointer hover:bg-gray-200  mt-1'>
-            <Link href="#">Communities</Link>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/communities' ? 'activePath' : ''} mt-1`}>
+            <Link href="#" onClick={()=>setPath('/dashboard/communities')}>Communities</Link>
+          </li>
+          <li className={`p-2 nav-link cursor-pointer hover:bg-gray-200 ${path == '/dashboard/graphAI' ? 'activePath' : ''} mt-1`}>
+            <Link href="/dashboard/graphAI" onClick={()=>setPath('/dashboard/graphAI')}>GraphAI</Link>
           </li>
         </ul>
       </div>

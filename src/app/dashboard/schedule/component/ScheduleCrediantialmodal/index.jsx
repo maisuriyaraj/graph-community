@@ -3,6 +3,7 @@ import { postRequest } from '@/lib/api.service';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import gsap from 'gsap';
 // import { HashLoaderComponent } from '../loader';
 // import Image from 'next/image';
 // import Check from '../../../../public/check.gif';

@@ -176,11 +176,11 @@ export default function Dashboard() {
     let greeting;
 
     if (currentHour < 12) {
-      greeting = "Good Morning";
+      greeting = "Good Morning!";
     } else if (currentHour < 18) {
-      greeting = "Good Afternoon";
+      greeting = "Good Afternoon!";
     } else {
-      greeting = "Good Evening";
+      greeting = "Good Evening!";
     }
 
     return greeting;

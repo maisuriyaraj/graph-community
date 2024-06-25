@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { HashLoaderComponent } from '../loader';
 import Image from 'next/image';
+import gsap from 'gsap';
 import Check from '../../../../public/check.gif';
 
 export default function GraphFieldTextModal(props) {

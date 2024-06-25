@@ -45,8 +45,7 @@ export default async function DashBoardLayout({ children }) {
   return (
     <html lang="en">
       <Head>
-        <Script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></Script>
-        <Script src="https://accounts.google.com/gsi/client" async defer></Script>
+        {/* <Script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></Script> */}
       </Head>
       <body className={inter.className}>
         <SideNav userData={userData} />
